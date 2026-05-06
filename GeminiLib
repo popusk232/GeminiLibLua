@@ -18,16 +18,16 @@ local player = Players.LocalPlayer
 --  THEME CONFIGURATION
 -- ═══════════════════════════════════════════════════════════════
 local Theme = {
-    Main = Color3.fromRGB(20, 10, 30),
-    Sidebar = Color3.fromRGB(15, 5, 20),
-    Accent = Color3.fromRGB(255, 60, 180),
-    Element = Color3.fromRGB(35, 20, 45),
-    Text = Color3.fromRGB(255, 255, 255),
-    SubText = Color3.fromRGB(200, 150, 200),
+    Main = Color3.fromRGB(18, 18, 20),
+    Sidebar = Color3.fromRGB(24, 24, 26),
+    Accent = Color3.fromRGB(100, 150, 255),
+    Element = Color3.fromRGB(30, 30, 32),
+    Text = Color3.fromRGB(245, 245, 245),
+    SubText = Color3.fromRGB(140, 140, 145),
     Close = Color3.fromRGB(255, 95, 85),
     Hide = Color3.fromRGB(255, 190, 45),
     Invisible = Color3.fromRGB(100, 100, 255),
-    Glow = Color3.fromRGB(255, 60, 180),
+    Glow = Color3.fromRGB(0, 0, 0),
     Success = Color3.fromRGB(40, 200, 65),
     RarityColors = {
         Secret = Color3.fromRGB(255, 50, 50),
@@ -112,13 +112,7 @@ local function CreateLoadingScreen(config)
     })
     Gradient.Rotation = 45
 
-    -- Анимация градиента
-    task.spawn(function()
-        while LoaderGui.Parent do
-            tween(Gradient, TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Rotation = Gradient.Rotation + 180})
-            task.wait(4)
-        end
-    end)
+    -- Анимация убрана для минимализма
 
     -- Центральный контейнер
     local Center = Instance.new("Frame")
@@ -206,30 +200,8 @@ local function CreateLoadingScreen(config)
     StatusText.Font = Enum.Font.Gotham
     StatusText.TextSize = 12
 
-    -- Частицы
-    local function createParticle()
-        local p = Instance.new("Frame", LoaderFrame)
-        p.Size = UDim2.new(0, math.random(2, 5), 0, math.random(2, 5))
-        p.Position = UDim2.new(math.random(), 0, math.random(), 0)
-        p.BackgroundColor3 = Theme.Accent
-        p.BorderSizePixel = 0
-        p.BackgroundTransparency = 0.4
-        Instance.new("UICorner", p).CornerRadius = UDim.new(1, 0)
+    -- Частицы убраны для минимализма
 
-        tween(p, TweenInfo.new(2 + math.random() * 2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-            Position = UDim2.new(p.Position.X.Scale + math.random(-0.1, 0.1), 0, p.Position.Y.Scale + math.random(-0.1, 0.1), 0),
-            BackgroundTransparency = 1,
-            Size = UDim2.new(0, 0, 0, 0)
-        })
-        task.delay(3, function() p:Destroy() end)
-    end
-
-    task.spawn(function()
-        while LoaderGui.Parent do
-            createParticle()
-            task.wait(0.25)
-        end
-    end)
 
     -- Пульсация кольца
     task.spawn(function()
@@ -537,29 +509,12 @@ function GeminiLib:Init(config)
     MainFrame.BackgroundColor3 = Theme.Main
     MainFrame.BorderSizePixel = 0
     MainFrame.ClipsDescendants = true
-    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 16)
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
 
     local MainStroke = Instance.new("UIStroke", MainFrame)
     MainStroke.Color = Theme.Accent
-    MainStroke.Thickness = 2
-    MainStroke.Transparency = 0.4
-
-    local MainGlow = Instance.new("Frame", MainFrame)
-    MainGlow.Size = UDim2.new(1, 20, 1, 20)
-    MainGlow.Position = UDim2.new(0, -10, 0, -10)
-    MainGlow.BackgroundColor3 = Theme.Accent
-    MainGlow.BackgroundTransparency = 0.95
-    MainGlow.ZIndex = -1
-    Instance.new("UICorner", MainGlow).CornerRadius = UDim.new(0, 20)
-
-    task.spawn(function()
-        while ScreenGui.Parent do
-            tween(MainGlow, TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0.97})
-            task.wait(3)
-            tween(MainGlow, TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0.93})
-            task.wait(3)
-        end
-    end)
+    MainStroke.Thickness = 1
+    MainStroke.Transparency = 0.6
 
     -- TopBar
     local TopBar = Instance.new("Frame", MainFrame)
@@ -764,7 +719,7 @@ function GeminiLib:Init(config)
     Sidebar.Position = UDim2.new(0, 0, 0, 40)
     Sidebar.BackgroundColor3 = Theme.Sidebar
     Sidebar.BorderSizePixel = 0
-    Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 16)
+    Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 8)
 
     local Divider = Instance.new("Frame", MainFrame)
     Divider.Size = UDim2.new(0, 1, 1, -50)
