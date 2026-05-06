@@ -3,7 +3,8 @@
 --  Inspired by Sirius v2 | Enhanced Visuals & Animations
 -- ═══════════════════════════════════════════════════════════════
 
-local GeminiLib = {}
+_G.GeminiLib = {}
+local GeminiLib = _G.GeminiLib
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
@@ -39,6 +40,16 @@ local Theme = {
         Common = Color3.fromRGB(200, 200, 200)
     }
 }
+
+-- ═══════════════════════════════════════════════════════════════
+--  UI CONSTANTS (Default PC)
+-- ═══════════════════════════════════════════════════════════════
+local UIScale = 1
+local FrameSize = UDim2.new(0, 520, 0, 360)
+local FramePos = UDim2.new(0.5, -260, 0.5, -180)
+local SidebarWidth = 140
+local MacBtnSize = UDim2.new(0, 12, 0, 12)
+local MacBtnOffset = 20
 
 -- ═══════════════════════════════════════════════════════════════
 --  UTILITY FUNCTIONS
@@ -412,7 +423,7 @@ local function CreateWatermark(config)
     end)
 
     QuickLoot.MouseButton1Click:Connect(function()
-        tween(QuickLoot, TweenInfo.new(0.3), {Rotation = 360}):Play()
+        tween(QuickLoot, TweenInfo.new(0.3), {Rotation = 360})
         task.wait(0.3)
         QuickLoot.Rotation = 0
 
@@ -1553,7 +1564,11 @@ function GeminiLib:Init(config)
                             root.CFrame = target:GetPivot() * CFrame.new(0, 3, 0)
                             task.wait(0.2)
                             local det = target:FindFirstChildOfClass("ClickDetector") or target:FindFirstChild("ClickDetector", true)
-                            if det then fireclickdetector(det) end
+                            if det and fireclickdetector then 
+                                fireclickdetector(det) 
+                            elseif det then
+                                warn("GEMINI: fireclickdetector not supported by your executor")
+                            end
                             task.wait(_G.GeminiConfig.TweenSpeed / 1000)
                         end
                     end
@@ -1603,7 +1618,11 @@ function GeminiLib:Init(config)
                 root.CFrame = best:GetPivot() * CFrame.new(0, 3, 0)
                 task.wait(0.2)
                 local det = best:FindFirstChildOfClass("ClickDetector") or best:FindFirstChild("ClickDetector", true)
-                if det then fireclickdetector(det) end
+                if det and fireclickdetector then 
+                    fireclickdetector(det) 
+                elseif det then
+                    warn("GEMINI: fireclickdetector not supported")
+                end
             end
         end
     end
