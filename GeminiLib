@@ -634,6 +634,7 @@ function GeminiLib:Init(config)
         task.wait(0.4)
         ScreenGui:Destroy()
         WatermarkGui:Destroy()
+        if CoreGui:FindFirstChild("GeminiESP") then CoreGui["GeminiESP"]:Destroy() end
     end)
 
     createMacBtn(Theme.Hide, MacBtnOffset, function()
@@ -714,11 +715,17 @@ function GeminiLib:Init(config)
             dragging = true
             dragStart = input.Position
             startPos = MainFrame.Position
-            tween(MainFrame, TweenInfo.new(0.2), {Size = UDim2.new(FrameSize.X.Scale, FrameSize.X.Offset + 5, FrameSize.Y.Scale, FrameSize.Y.Offset + 5)})
+            
+            if not isMinimized then
+                tween(MainFrame, TweenInfo.new(0.2), {Size = UDim2.new(FrameSize.X.Scale, FrameSize.X.Offset + 5, FrameSize.Y.Scale, FrameSize.Y.Offset + 5)})
+            end
+            
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
-                    tween(MainFrame, TweenInfo.new(0.2), {Size = FrameSize})
+                    if not isMinimized then
+                        tween(MainFrame, TweenInfo.new(0.2), {Size = FrameSize})
+                    end
                 end
             end)
         end
@@ -917,9 +924,8 @@ function GeminiLib:Init(config)
             IndGlow.ZIndex = -1
             Instance.new("UICorner", IndGlow).CornerRadius = UDim.new(1, 0)
 
-            local state = false
-            btn.MouseButton1Click:Connect(function()
-                state = not state
+            local function updateVisuals(v)
+                state = v
                 if state then
                     tween(Ind, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
                         Position = UDim2.new(1, -20, 0.5, -9), BackgroundColor3 = Theme.Accent
@@ -933,10 +939,17 @@ function GeminiLib:Init(config)
                     tween(IndContainer, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(25, 15, 35)})
                     tween(IndGlow, TweenInfo.new(0.3), {BackgroundTransparency = 1})
                 end
+            end
+
+            btn.MouseButton1Click:Connect(function()
+                updateVisuals(not state)
                 if callback then callback(state) end
             end)
 
-            return {Set = function(v) state = v end, Get = function() return state end}
+            return {
+                Set = function(v) updateVisuals(v) if callback then callback(v) end end, 
+                Get = function() return state end
+            }
         end
 
         function Tab:AddSlider(text, min, max, default, callback)
@@ -1311,128 +1324,26 @@ function GeminiLib:Init(config)
         end
 
         -- ═══════════════════════════════════════════════════════════════
-        --  PLATFORM SELECTOR (PC / Mobile) — после загрузки
+        --  AUTO INITIALIZATION (PC DEFAULT)
         -- ═══════════════════════════════════════════════════════════════
-        local Platform = "PC"
-        local PlatformGui = Instance.new("ScreenGui")
-        PlatformGui.Name = "GeminiPlatformSelector"
-        PlatformGui.IgnoreGuiInset = true
-        PlatformGui.ResetOnSpawn = false
-        PlatformGui.DisplayOrder = 1000
-        PlatformGui.Parent = CoreGui
-
-        local PlatformBg = Instance.new("Frame", PlatformGui)
-        PlatformBg.Size = UDim2.new(1, 0, 1, 0)
-        PlatformBg.BackgroundColor3 = Color3.fromRGB(10, 5, 15)
-        PlatformBg.BackgroundTransparency = 0.3
-        PlatformBg.BorderSizePixel = 0
-
-        local PlatformFrame = Instance.new("Frame", PlatformBg)
-        PlatformFrame.Size = UDim2.new(0, 320, 0, 180)
-        PlatformFrame.Position = UDim2.new(0.5, -160, 0.5, -90)
-        PlatformFrame.BackgroundColor3 = Theme.Main
-        PlatformFrame.BorderSizePixel = 0
-        Instance.new("UICorner", PlatformFrame).CornerRadius = UDim.new(0, 14)
-
-        local PlatformStroke = Instance.new("UIStroke", PlatformFrame)
-        PlatformStroke.Color = Theme.Accent
-        PlatformStroke.Thickness = 1.5
-        PlatformStroke.Transparency = 0.4
-
-        local PlatformTitle = Instance.new("TextLabel", PlatformFrame)
-        PlatformTitle.Size = UDim2.new(1, 0, 0, 40)
-        PlatformTitle.Position = UDim2.new(0, 0, 0, 15)
-        PlatformTitle.BackgroundTransparency = 1
-        PlatformTitle.Text = "SELECT PLATFORM"
-        PlatformTitle.TextColor3 = Theme.Accent
-        PlatformTitle.Font = Enum.Font.GothamBlack
-        PlatformTitle.TextSize = 20
-
-        local PlatformSub = Instance.new("TextLabel", PlatformFrame)
-        PlatformSub.Size = UDim2.new(1, 0, 0, 20)
-        PlatformSub.Position = UDim2.new(0, 0, 0, 50)
-        PlatformSub.BackgroundTransparency = 1
-        PlatformSub.Text = "Choose your device type"
-        PlatformSub.TextColor3 = Theme.SubText
-        PlatformSub.Font = Enum.Font.Gotham
-        PlatformSub.TextSize = 12
-
-        local PCBtn = Instance.new("TextButton", PlatformFrame)
-        PCBtn.Size = UDim2.new(0, 130, 0, 45)
-        PCBtn.Position = UDim2.new(0, 20, 0, 95)
-        PCBtn.BackgroundColor3 = Theme.Accent
-        PCBtn.Text = "💻  PC"
-        PCBtn.TextColor3 = Theme.Main
-        PCBtn.Font = Enum.Font.GothamBold
-        PCBtn.TextSize = 14
-        PCBtn.AutoButtonColor = false
-        Instance.new("UICorner", PCBtn).CornerRadius = UDim.new(0, 10)
-
-        local MobileBtn = Instance.new("TextButton", PlatformFrame)
-        MobileBtn.Size = UDim2.new(0, 130, 0, 45)
-        MobileBtn.Position = UDim2.new(0, 170, 0, 95)
-        MobileBtn.BackgroundColor3 = Theme.Element
-        MobileBtn.Text = "📱  Mobile"
-        MobileBtn.TextColor3 = Theme.Text
-        MobileBtn.Font = Enum.Font.GothamBold
-        MobileBtn.TextSize = 14
-        MobileBtn.AutoButtonColor = false
-        Instance.new("UICorner", MobileBtn).CornerRadius = UDim.new(0, 10)
-
-        PCBtn.MouseEnter:Connect(function()
-            tween(PCBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 80, 200)})
-        end)
-        PCBtn.MouseLeave:Connect(function()
-            tween(PCBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent})
-        end)
-
-        MobileBtn.MouseEnter:Connect(function()
-            tween(MobileBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 25, 55)})
-        end)
-        MobileBtn.MouseLeave:Connect(function()
-            tween(MobileBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element})
-        end)
-
-        local platformSelected = false
-
-            local function selectPlatform(platform)
-                if platformSelected then return end
-                platformSelected = true
-                Platform = platform
-
-                if platform == "Mobile" then
-                    UIScale = 1.3
-                    FrameSize = UDim2.new(0, 400, 0, 280)
-                    FramePos = UDim2.new(0.5, -200, 0.5, -140)
-                    SidebarWidth = 110
-                    MacBtnSize = UDim2.new(0, 16, 0, 16)
-                    MacBtnOffset = 28
-                end
-
-                tween(PlatformFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-                    Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)
-                })
-                tween(PlatformBg, TweenInfo.new(0.3), {BackgroundTransparency = 1})
-                task.wait(0.35)
-                PlatformGui:Destroy()
-            end
-
-            PCBtn.MouseButton1Click:Connect(function() selectPlatform("PC") end)
-            MobileBtn.MouseButton1Click:Connect(function() selectPlatform("Mobile") end)
-
-            -- Авто-определение
-            if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
-                selectPlatform("Mobile")
-            end
-
-            -- Ждём выбора
-            while PlatformGui.Parent do
-                task.wait(0.1)
-            end
-
-            -- Применяем размеры
-            tween(MainFrame, TweenInfo.new(0.3), {Size = FrameSize, Position = FramePos})
+        if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+            -- Auto-adjust for Mobile if detected
+            UIScale = 1.3
+            FrameSize = UDim2.new(0, 400, 0, 280)
+            FramePos = UDim2.new(0.5, -200, 0.5, -140)
+            SidebarWidth = 110
+            MacBtnSize = UDim2.new(0, 16, 0, 16)
+            MacBtnOffset = 28
+            
+            -- Apply changes immediately
+            MainFrame.Size = FrameSize
+            MainFrame.Position = FramePos
+            Sidebar.Size = UDim2.new(0, SidebarWidth, 1, -40)
+            Container.Size = UDim2.new(1, -SidebarWidth - 25, 1, -55)
+            Container.Position = UDim2.new(0, SidebarWidth + 15, 0, 50)
+            Divider.Position = UDim2.new(0, SidebarWidth + 5, 0, 45)
         end
+    end
 
 
     -- ═══════════════════════════════════════════════════════════════
@@ -1583,7 +1494,9 @@ function GeminiLib:Init(config)
     task.spawn(function()
         while task.wait(1) do
             local count = 0
-            for _, v in pairs(workspace:GetChildren()) do
+            local children = workspace:GetChildren()
+            for i = 1, #children do
+                local v = children[i]
                 if v:IsA("Model") and v:GetAttribute("SpawnedCrate") then
                     local r = v:GetAttribute("Rarity") or "Common"
                     if _G.GeminiConfig.SelectedRarities[r] then
