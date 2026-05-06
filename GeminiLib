@@ -1057,49 +1057,119 @@ function GeminiLib:Init(config)
         end
 
         -- ═══════════════════════════════════════════════════════════════
-        --  CHECKLIST (NEW!) — выбор редкостей крейтов
+        --  DROPDOWN CHECKLIST — выпадающий чеклист с анимацией ▶ ▼
         -- ═══════════════════════════════════════════════════════════════
-        function Tab:AddChecklist(titleText, options, callback)
-            -- options = {"Secret", "Godly", "Mythic", ...}
-            local container = Instance.new("Frame", Page)
-            container.Size = UDim2.new(1, 0, 0, 40 + (#options * 36))
-            container.BackgroundColor3 = Theme.Element
-            container.BorderSizePixel = 0
-            Instance.new("UICorner", container).CornerRadius = UDim.new(0, 10)
-
-            local title = Instance.new("TextLabel", container)
-            title.Size = UDim2.new(1, -20, 0, 28)
-            title.Position = UDim2.new(0, 12, 0, 8)
-            title.BackgroundTransparency = 1
-            title.Text = "  " .. titleText
-            title.TextColor3 = Theme.Text
-            title.Font = Enum.Font.GothamBold
-            title.TextSize = 13
-            title.TextXAlignment = Enum.TextXAlignment.Left
-
-            local line = Instance.new("Frame", container)
-            line.Size = UDim2.new(1, -20, 0, 1)
-            line.Position = UDim2.new(0, 10, 0, 36)
-            line.BackgroundColor3 = Theme.Accent
-            line.BorderSizePixel = 0
-            line.BackgroundTransparency = 0.6
-
+        function Tab:AddDropdown(titleText, options, callback)
+            local isOpen = false
             local results = {}
             local checkboxes = {}
+            local itemHeight = 34
+            local headerHeight = 42
 
+            -- Главный контейнер (свернутый по умолчанию)
+            local container = Instance.new("Frame", Page)
+            container.Size = UDim2.new(1, 0, 0, headerHeight)
+            container.BackgroundColor3 = Theme.Element
+            container.BorderSizePixel = 0
+            container.ClipsDescendants = true
+            Instance.new("UICorner", container).CornerRadius = UDim.new(0, 10)
+
+            -- Hover эффект
+            container.MouseEnter:Connect(function()
+                if not isOpen then
+                    tween(container, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 25, 55)})
+                end
+            end)
+            container.MouseLeave:Connect(function()
+                if not isOpen then
+                    tween(container, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element})
+                end
+            end)
+
+            -- Заголовок / кнопка открытия
+            local headerBtn = Instance.new("TextButton", container)
+            headerBtn.Size = UDim2.new(1, 0, 0, headerHeight)
+            headerBtn.BackgroundTransparency = 1
+            headerBtn.Text = ""
+            headerBtn.AutoButtonColor = false
+
+            -- Текст заголовка
+            local titleLabel = Instance.new("TextLabel", headerBtn)
+            titleLabel.Size = UDim2.new(1, -60, 1, 0)
+            titleLabel.Position = UDim2.new(0, 15, 0, 0)
+            titleLabel.BackgroundTransparency = 1
+            titleLabel.Text = "  " .. titleText
+            titleLabel.TextColor3 = Theme.Text
+            titleLabel.Font = Enum.Font.GothamBold
+            titleLabel.TextSize = 13
+            titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+            -- Стрелка ▶ / ▼
+            local arrow = Instance.new("TextLabel", headerBtn)
+            arrow.Size = UDim2.new(0, 30, 0, 30)
+            arrow.Position = UDim2.new(1, -38, 0.5, -15)
+            arrow.BackgroundTransparency = 1
+            arrow.Text = "▶"
+            arrow.TextColor3 = Theme.Accent
+            arrow.Font = Enum.Font.GothamBold
+            arrow.TextSize = 14
+
+            -- Счётчик выбранных
+            local counter = Instance.new("TextLabel", headerBtn)
+            counter.Size = UDim2.new(0, 50, 0, 20)
+            counter.Position = UDim2.new(1, -85, 0.5, -10)
+            counter.BackgroundTransparency = 1
+            counter.Text = "0/" .. #options
+            counter.TextColor3 = Theme.SubText
+            counter.Font = Enum.Font.Gotham
+            counter.TextSize = 11
+            counter.TextXAlignment = Enum.TextXAlignment.Right
+
+            -- Разделитель
+            local divider = Instance.new("Frame", container)
+            divider.Size = UDim2.new(1, -20, 0, 1)
+            divider.Position = UDim2.new(0, 10, 0, headerHeight - 1)
+            divider.BackgroundColor3 = Theme.Accent
+            divider.BorderSizePixel = 0
+            divider.BackgroundTransparency = 0.7
+            divider.Visible = false
+
+            -- Контейнер для опций
+            local optionsContainer = Instance.new("Frame", container)
+            optionsContainer.Size = UDim2.new(1, 0, 0, #options * itemHeight)
+            optionsContainer.Position = UDim2.new(0, 0, 0, headerHeight)
+            optionsContainer.BackgroundTransparency = 1
+            optionsContainer.Visible = false
+
+            -- Создаём опции
             for i, option in ipairs(options) do
                 results[option] = false
-
-                local row = Instance.new("Frame", container)
-                row.Size = UDim2.new(1, -16, 0, 32)
-                row.Position = UDim2.new(0, 8, 0, 40 + (i - 1) * 34)
-                row.BackgroundTransparency = 1
-
                 local color = Theme.RarityColors[option] or Theme.SubText
 
+                local row = Instance.new("Frame", optionsContainer)
+                row.Size = UDim2.new(1, -16, 0, itemHeight)
+                row.Position = UDim2.new(0, 8, 0, (i - 1) * itemHeight)
+                row.BackgroundTransparency = 1
+
+                -- Hover row
+                local rowBg = Instance.new("Frame", row)
+                rowBg.Size = UDim2.new(1, 0, 1, 0)
+                rowBg.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                rowBg.BackgroundTransparency = 1
+                rowBg.ZIndex = 0
+                Instance.new("UICorner", rowBg).CornerRadius = UDim.new(0, 6)
+
+                row.MouseEnter:Connect(function()
+                    tween(rowBg, TweenInfo.new(0.15), {BackgroundTransparency = 0.95})
+                end)
+                row.MouseLeave:Connect(function()
+                    tween(rowBg, TweenInfo.new(0.15), {BackgroundTransparency = 1})
+                end)
+
+                -- Чекбокс
                 local box = Instance.new("TextButton", row)
-                box.Size = UDim2.new(0, 20, 0, 20)
-                box.Position = UDim2.new(0, 8, 0.5, -10)
+                box.Size = UDim2.new(0, 18, 0, 18)
+                box.Position = UDim2.new(0, 10, 0.5, -9)
                 box.BackgroundColor3 = Color3.fromRGB(30, 20, 40)
                 box.Text = ""
                 box.AutoButtonColor = false
@@ -1111,15 +1181,16 @@ function GeminiLib:Init(config)
                 boxStroke.Transparency = 0.5
 
                 local check = Instance.new("Frame", box)
-                check.Size = UDim2.new(0, 12, 0, 12)
-                check.Position = UDim2.new(0.5, -6, 0.5, -6)
+                check.Size = UDim2.new(0, 10, 0, 10)
+                check.Position = UDim2.new(0.5, -5, 0.5, -5)
                 check.BackgroundColor3 = color
                 check.BorderSizePixel = 0
                 check.Visible = false
-                Instance.new("UICorner", check).CornerRadius = UDim.new(0, 3)
+                Instance.new("UICorner", check).CornerRadius = UDim.new(0, 2)
 
+                -- Название
                 local label = Instance.new("TextLabel", row)
-                label.Size = UDim2.new(1, -40, 1, 0)
+                label.Size = UDim2.new(1, -45, 1, 0)
                 label.Position = UDim2.new(0, 36, 0, 0)
                 label.BackgroundTransparency = 1
                 label.Text = option
@@ -1128,42 +1199,107 @@ function GeminiLib:Init(config)
                 label.TextSize = 12
                 label.TextXAlignment = Enum.TextXAlignment.Left
 
-                box.MouseEnter:Connect(function()
-                    tween(box, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(45, 30, 55)})
-                end)
-                box.MouseLeave:Connect(function()
-                    tween(box, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(30, 20, 40)})
-                end)
-
-                box.MouseButton1Click:Connect(function()
+                -- Клик по строке
+                local function toggleOption()
                     results[option] = not results[option]
                     check.Visible = results[option]
+
                     if results[option] then
-                        tween(check, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 12, 0, 12)})
+                        tween(check, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 10, 0, 10)})
                         tween(boxStroke, TweenInfo.new(0.2), {Transparency = 0, Thickness = 2})
+                        tween(box, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 25, 50)})
                     else
                         tween(boxStroke, TweenInfo.new(0.2), {Transparency = 0.5, Thickness = 1.5})
+                        tween(box, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(30, 20, 40)})
                     end
+
+                    -- Обновляем счётчик
+                    local selectedCount = 0
+                    for _, v in pairs(results) do if v then selectedCount = selectedCount + 1 end end
+                    counter.Text = selectedCount .. "/" .. #options
+
                     if callback then callback(results) end
+                end
+
+                box.MouseButton1Click:Connect(toggleOption)
+                row.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        toggleOption()
+                    end
                 end)
 
-                checkboxes[option] = {box = box, check = check, stroke = boxStroke}
+                checkboxes[option] = {box = box, check = check, stroke = boxStroke, row = row}
             end
+
+            -- Функция открытия/закрытия
+            local function toggleDropdown()
+                isOpen = not isOpen
+
+                if isOpen then
+                    -- Открываем
+                    tween(arrow, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Rotation = 90})
+                    divider.Visible = true
+                    optionsContainer.Visible = true
+
+                    -- Анимация появления опций
+                    for i, child in pairs(optionsContainer:GetChildren()) do
+                        if child:IsA("Frame") then
+                            child.BackgroundTransparency = 1
+                            tween(child, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, i * 0.03), {BackgroundTransparency = 0})
+                        end
+                    end
+
+                    tween(container, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                        Size = UDim2.new(1, 0, 0, headerHeight + (#options * itemHeight) + 5)
+                    })
+                    tween(container, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element})
+                else
+                    -- Закрываем
+                    tween(arrow, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Rotation = 0})
+
+                    tween(container, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+                        Size = UDim2.new(1, 0, 0, headerHeight)
+                    })
+
+                    task.delay(0.3, function()
+                        if not isOpen then
+                            divider.Visible = false
+                            optionsContainer.Visible = false
+                        end
+                    end)
+                end
+            end
+
+            headerBtn.MouseButton1Click:Connect(toggleDropdown)
 
             return {
                 Get = function() return results end,
                 Set = function(option, value)
-                    if results[option] ~= nil then
+                    if results[option] ~= nil and results[option] ~= value then
                         results[option] = value
                         local cb = checkboxes[option]
                         cb.check.Visible = value
                         if value then
-                            tween(cb.check, TweenInfo.new(0.15), {Size = UDim2.new(0, 12, 0, 12)})
+                            tween(cb.check, TweenInfo.new(0.15), {Size = UDim2.new(0, 10, 0, 10)})
                             tween(cb.stroke, TweenInfo.new(0.2), {Transparency = 0, Thickness = 2})
+                            tween(cb.box, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 25, 50)})
                         else
                             tween(cb.stroke, TweenInfo.new(0.2), {Transparency = 0.5, Thickness = 1.5})
+                            tween(cb.box, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(30, 20, 40)})
                         end
+
+                        local selectedCount = 0
+                        for _, v in pairs(results) do if v then selectedCount = selectedCount + 1 end end
+                        counter.Text = selectedCount .. "/" .. #options
+
+                        if callback then callback(results) end
                     end
+                end,
+                Open = function()
+                    if not isOpen then toggleDropdown() end
+                end,
+                Close = function()
+                    if isOpen then toggleDropdown() end
                 end
             }
         end
