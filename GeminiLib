@@ -45,11 +45,11 @@ local Theme = {
 --  UI CONSTANTS (Default PC)
 -- ═══════════════════════════════════════════════════════════════
 local UIScale = 1
-local FrameSize = UDim2.new(0, 520, 0, 360)
-local FramePos = UDim2.new(0.5, -260, 0.5, -180)
-local SidebarWidth = 140
-local MacBtnSize = UDim2.new(0, 12, 0, 12)
-local MacBtnOffset = 20
+local FrameSize = UDim2.new(0, 680, 0, 460)
+local FramePos = UDim2.new(0.5, -340, 0.5, -230)
+local SidebarWidth = 180
+local MacBtnSize = UDim2.new(0, 14, 0, 14)
+local MacBtnOffset = 24
 
 -- ═══════════════════════════════════════════════════════════════
 --  UTILITY FUNCTIONS
@@ -129,7 +129,7 @@ local function CreateLoadingScreen(config)
     Logo.Text = title
     Logo.TextColor3 = Theme.Accent
     Logo.Font = Enum.Font.GothamBlack
-    Logo.TextSize = 48
+    Logo.TextSize = 51
     Logo.TextStrokeTransparency = 0.9
     Logo.TextStrokeColor3 = Theme.Accent
 
@@ -141,7 +141,7 @@ local function CreateLoadingScreen(config)
     LogoGlow.Text = title
     LogoGlow.TextColor3 = Theme.Accent
     LogoGlow.Font = Enum.Font.GothamBlack
-    LogoGlow.TextSize = 48
+    LogoGlow.TextSize = 51
     LogoGlow.TextTransparency = 0.75
     LogoGlow.ZIndex = 0
 
@@ -153,7 +153,7 @@ local function CreateLoadingScreen(config)
     Sub.Text = subtitle
     Sub.TextColor3 = Theme.SubText
     Sub.Font = Enum.Font.GothamBold
-    Sub.TextSize = 14
+    Sub.TextSize = 17
     Sub.TextTransparency = 0.3
 
     -- Кольцо прогресса
@@ -188,7 +188,7 @@ local function CreateLoadingScreen(config)
     PercentText.Text = "0%"
     PercentText.TextColor3 = Theme.Text
     PercentText.Font = Enum.Font.GothamBold
-    PercentText.TextSize = 18
+    PercentText.TextSize = 21
 
     -- Статус
     local StatusText = Instance.new("TextLabel", Center)
@@ -198,7 +198,7 @@ local function CreateLoadingScreen(config)
     StatusText.Text = "Initializing"
     StatusText.TextColor3 = Theme.SubText
     StatusText.Font = Enum.Font.Gotham
-    StatusText.TextSize = 12
+    StatusText.TextSize = 15
 
     -- Частицы убраны для минимализма
 
@@ -341,7 +341,7 @@ local function CreateWatermark(config)
     WatermarkText.Text = config.Title or "◆ GEMINI PREMIUM | ACTIVE ◆"
     WatermarkText.TextColor3 = Theme.Accent
     WatermarkText.Font = Enum.Font.GothamBold
-    WatermarkText.TextSize = 13
+    WatermarkText.TextSize = 16
     WatermarkText.TextXAlignment = Enum.TextXAlignment.Left
 
     -- Разделитель
@@ -360,7 +360,7 @@ local function CreateWatermark(config)
     CrateInfo.Text = showCrates and "Scanning for crates..." or ""
     CrateInfo.TextColor3 = Theme.SubText
     CrateInfo.Font = Enum.Font.Gotham
-    CrateInfo.TextSize = 11
+    CrateInfo.TextSize = 14
     CrateInfo.TextXAlignment = Enum.TextXAlignment.Center
     CrateInfo.RichText = true
 
@@ -370,7 +370,7 @@ local function CreateWatermark(config)
     QuickLoot.Position = UDim2.new(1, -35, 0, 3)
     QuickLoot.BackgroundTransparency = 1
     QuickLoot.Text = "🎯"
-    QuickLoot.TextSize = 16
+    QuickLoot.TextSize = 19
     QuickLoot.TextColor3 = Theme.Accent
     QuickLoot.Font = Enum.Font.GothamBold
 
@@ -381,17 +381,17 @@ local function CreateWatermark(config)
     Tooltip.Text = "Quick Loot Best"
     Tooltip.TextColor3 = Theme.Text
     Tooltip.Font = Enum.Font.Gotham
-    Tooltip.TextSize = 10
+    Tooltip.TextSize = 13
     Tooltip.Visible = false
     Instance.new("UICorner", Tooltip).CornerRadius = UDim.new(0, 6)
 
     QuickLoot.MouseEnter:Connect(function()
         Tooltip.Visible = true
-        tween(QuickLoot, TweenInfo.new(0.2), {TextSize = 18})
+        tween(QuickLoot, TweenInfo.new(0.2), {TextSize = 21})
     end)
     QuickLoot.MouseLeave:Connect(function()
         Tooltip.Visible = false
-        tween(QuickLoot, TweenInfo.new(0.2), {TextSize = 16})
+        tween(QuickLoot, TweenInfo.new(0.2), {TextSize = 19})
     end)
 
     QuickLoot.MouseButton1Click:Connect(function()
@@ -535,7 +535,7 @@ function GeminiLib:Init(config)
     TitleLabel.Text = title
     TitleLabel.TextColor3 = Theme.SubText
     TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextSize = 12
+    TitleLabel.TextSize = 15
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -744,7 +744,7 @@ function GeminiLib:Init(config)
     StatusLabel.Text = "Crates: 0"
     StatusLabel.TextColor3 = Theme.Accent
     StatusLabel.Font = Enum.Font.GothamBold
-    StatusLabel.TextSize = 11
+    StatusLabel.TextSize = 14
 
     local StatusGlow = Instance.new("Frame", StatusLabel)
     StatusGlow.Size = UDim2.new(1, -20, 0, 1)
@@ -785,12 +785,12 @@ function GeminiLib:Init(config)
         pad.PaddingRight = UDim.new(0, 5)
 
         local TabBtn = Instance.new("TextButton", TabContainer)
-        TabBtn.Size = UDim2.new(0.9, 0, 0, 36)
+        TabBtn.Size = UDim2.new(0.9, 0, 0, 44)
         TabBtn.BackgroundColor3 = Theme.Element
         TabBtn.Text = (icon or "▸") .. "  " .. name
         TabBtn.TextColor3 = Theme.SubText
         TabBtn.Font = Enum.Font.GothamSemibold
-        TabBtn.TextSize = 12
+        TabBtn.TextSize = 15
         TabBtn.AutoButtonColor = false
         Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 8)
 
@@ -841,13 +841,13 @@ function GeminiLib:Init(config)
         -- ═══════════════════════════════════════════════════════════════
         function Tab:AddToggle(text, callback)
             local btn = Instance.new("TextButton", Page)
-            btn.Size = UDim2.new(1, 0, 0, 46)
+            btn.Size = UDim2.new(1, 0, 0, 54)
             btn.BackgroundColor3 = Theme.Element
             btn.Text = "  " .. text
             btn.TextColor3 = Theme.Text
             btn.TextXAlignment = Enum.TextXAlignment.Left
             btn.Font = Enum.Font.Gotham
-            btn.TextSize = 13
+            btn.TextSize = 16
             btn.AutoButtonColor = false
             Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
 
@@ -904,7 +904,7 @@ function GeminiLib:Init(config)
 
         function Tab:AddSlider(text, min, max, default, callback)
             local frame = Instance.new("Frame", Page)
-            frame.Size = UDim2.new(1, 0, 0, 70)
+            frame.Size = UDim2.new(1, 0, 0, 80)
             frame.BackgroundColor3 = Theme.Element
             Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
 
@@ -921,7 +921,7 @@ function GeminiLib:Init(config)
             label.Text = text .. ": " .. default
             label.TextColor3 = Theme.Text
             label.Font = Enum.Font.Gotham
-            label.TextSize = 12
+            label.TextSize = 15
             label.BackgroundTransparency = 1
             label.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -1008,12 +1008,12 @@ function GeminiLib:Init(config)
 
         function Tab:AddButton(text, callback)
             local btn = Instance.new("TextButton", Page)
-            btn.Size = UDim2.new(1, 0, 0, 40)
+            btn.Size = UDim2.new(1, 0, 0, 48)
             btn.BackgroundColor3 = Theme.Accent
             btn.Text = text
             btn.TextColor3 = Theme.Main
             btn.Font = Enum.Font.GothamBold
-            btn.TextSize = 12
+            btn.TextSize = 15
             btn.AutoButtonColor = false
             Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
 
@@ -1050,8 +1050,8 @@ function GeminiLib:Init(config)
             local isOpen = false
             local results = {}
             local checkboxes = {}
-            local itemHeight = 32
-            local headerHeight = 38
+            local itemHeight = 38
+            local headerHeight = 44
 
             local container = Instance.new("Frame", Page)
             container.Size = UDim2.new(1, 0, 0, headerHeight)
@@ -1074,7 +1074,7 @@ function GeminiLib:Init(config)
             titleLabel.Text = titleText
             titleLabel.TextColor3 = Theme.Text
             titleLabel.Font = Enum.Font.Gotham
-            titleLabel.TextSize = 12
+            titleLabel.TextSize = 15
             titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
             -- Arrow
@@ -1085,7 +1085,7 @@ function GeminiLib:Init(config)
             arrow.Text = "▶"
             arrow.TextColor3 = Theme.SubText
             arrow.Font = Enum.Font.GothamBold
-            arrow.TextSize = 11
+            arrow.TextSize = 14
 
             -- Counter
             local counter = Instance.new("TextLabel", headerBtn)
@@ -1095,7 +1095,7 @@ function GeminiLib:Init(config)
             counter.Text = "0"
             counter.TextColor3 = Theme.SubText
             counter.Font = Enum.Font.Gotham
-            counter.TextSize = 10
+            counter.TextSize = 13
             counter.TextXAlignment = Enum.TextXAlignment.Right
 
             -- Divider
@@ -1153,7 +1153,7 @@ function GeminiLib:Init(config)
                 label.Text = option
                 label.TextColor3 = color
                 label.Font = Enum.Font.Gotham
-                label.TextSize = 11
+                label.TextSize = 14
                 label.TextXAlignment = Enum.TextXAlignment.Left
 
                 local function toggleOption()
@@ -1236,7 +1236,7 @@ function GeminiLib:Init(config)
             lbl.Text = text
             lbl.TextColor3 = Theme.SubText
             lbl.Font = Enum.Font.Gotham
-            lbl.TextSize = 11
+            lbl.TextSize = 14
             lbl.TextXAlignment = Enum.TextXAlignment.Left
             return lbl
         end
@@ -1325,7 +1325,7 @@ function GeminiLib:Init(config)
             nameLabel.Text = plr.Name .. (invis and " [I]" or "")
             nameLabel.TextColor3 = nameColor
             nameLabel.Font = Enum.Font.GothamBold
-            nameLabel.TextSize = 14
+            nameLabel.TextSize = 17
             nameLabel.TextStrokeTransparency = 0.5
 
             local distLabel = Instance.new("TextLabel", billboard)
@@ -1334,7 +1334,7 @@ function GeminiLib:Init(config)
             distLabel.BackgroundTransparency = 1
             distLabel.TextColor3 = Theme.SubText
             distLabel.Font = Enum.Font.Gotham
-            distLabel.TextSize = 12
+            distLabel.TextSize = 15
             distLabel.TextStrokeTransparency = 0.5
 
             local highlight = Instance.new("Highlight", espFolder)
