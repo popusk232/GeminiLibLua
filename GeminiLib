@@ -1,6 +1,6 @@
 -- ═══════════════════════════════════════════════════════════════
---  GEMINI LIBRARY v2.0 | Premium UI Library for Roblox
---  Inspired by Sirius v2 | Enhanced Visuals & Animations
+--  GEMINI LIBRARY v3.0 | Premium UI Library for Roblox
+--  Redesigned Edition | Glassmorphism & Neon Aesthetics
 -- ═══════════════════════════════════════════════════════════════
 
 _G.GeminiLib = {}
@@ -11,26 +11,30 @@ local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TextService = game:GetService("TextService")
 
 local player = Players.LocalPlayer
 
 -- ═══════════════════════════════════════════════════════════════
---  THEME CONFIGURATION
+--  THEME CONFIGURATION - Glassmorphism & Neon
 -- ═══════════════════════════════════════════════════════════════
 local Theme = {
-    Main = Color3.fromRGB(18, 18, 20),
-    Sidebar = Color3.fromRGB(24, 24, 26),
-    Accent = Color3.fromRGB(100, 150, 255),
-    Element = Color3.fromRGB(30, 30, 32),
-    Text = Color3.fromRGB(245, 245, 245),
-    SubText = Color3.fromRGB(140, 140, 145),
-    Close = Color3.fromRGB(255, 95, 85),
-    Hide = Color3.fromRGB(255, 190, 45),
-    Invisible = Color3.fromRGB(100, 100, 255),
-    Glow = Color3.fromRGB(0, 0, 0),
-    Success = Color3.fromRGB(40, 200, 65),
+    Main = Color3.fromRGB(12, 12, 18),
+    Sidebar = Color3.fromRGB(18, 18, 28),
+    Accent = Color3.fromRGB(0, 200, 255),
+    AccentSecondary = Color3.fromRGB(255, 0, 128),
+    Element = Color3.fromRGB(25, 25, 35),
+    ElementHover = Color3.fromRGB(35, 30, 50),
+    Text = Color3.fromRGB(240, 240, 250),
+    SubText = Color3.fromRGB(160, 160, 180),
+    Close = Color3.fromRGB(255, 70, 70),
+    Hide = Color3.fromRGB(255, 180, 40),
+    Invisible = Color3.fromRGB(120, 120, 255),
+    Glow = Color3.fromRGB(0, 200, 255),
+    Success = Color3.fromRGB(50, 220, 100),
+    Glass = Color3.fromRGB(255, 255, 255),
     RarityColors = {
-        Secret = Color3.fromRGB(255, 50, 50),
+        Secret = Color3.fromRGB(255, 30, 30),
         Godly = Color3.fromRGB(255, 215, 0),
         Mythic = Color3.fromRGB(180, 50, 255),
         Legendary = Color3.fromRGB(255, 140, 0),
@@ -42,12 +46,12 @@ local Theme = {
 }
 
 -- ═══════════════════════════════════════════════════════════════
---  UI CONSTANTS (Default PC)
+--  UI CONSTANTS
 -- ═══════════════════════════════════════════════════════════════
 local UIScale = 1
-local FrameSize = UDim2.new(0, 680, 0, 460)
-local FramePos = UDim2.new(0.5, -340, 0.5, -230)
-local SidebarWidth = 180
+local FrameSize = UDim2.new(0, 720, 0, 480)
+local FramePos = UDim2.new(0.5, -360, 0.5, -240)
+local SidebarWidth = 200
 local MacBtnSize = UDim2.new(0, 14, 0, 14)
 local MacBtnOffset = 24
 
@@ -65,7 +69,7 @@ local function ripple(button, x, y)
     ripple.Size = UDim2.new(0, 0, 0, 0)
     ripple.Position = UDim2.new(0, x, 0, y)
     ripple.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    ripple.BackgroundTransparency = 0.7
+    ripple.BackgroundTransparency = 0.6
     ripple.BorderSizePixel = 0
     ripple.ZIndex = button.ZIndex + 1
     Instance.new("UICorner", ripple).CornerRadius = UDim.new(1, 0)
@@ -83,7 +87,7 @@ local function ripple(button, x, y)
 end
 
 -- ═══════════════════════════════════════════════════════════════
---  LOADING SCREEN
+--  LOADING SCREEN - Cyberpunk Style
 -- ═══════════════════════════════════════════════════════════════
 local function CreateLoadingScreen(config)
     config = config or {}
@@ -100,85 +104,143 @@ local function CreateLoadingScreen(config)
 
     local LoaderFrame = Instance.new("Frame")
     LoaderFrame.Size = UDim2.new(1, 0, 1, 0)
-    LoaderFrame.BackgroundColor3 = Color3.fromRGB(10, 5, 15)
+    LoaderFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 10)
     LoaderFrame.BorderSizePixel = 0
     LoaderFrame.Parent = LoaderGui
 
+    -- Animated gradient background
     local Gradient = Instance.new("UIGradient", LoaderFrame)
     Gradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 5, 15)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(25, 10, 35)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 5, 15))
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(5, 5, 15)),
+        ColorSequenceKeypoint.new(0.3, Color3.fromRGB(15, 5, 25)),
+        ColorSequenceKeypoint.new(0.7, Color3.fromRGB(5, 15, 25)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 5, 15))
     })
     Gradient.Rotation = 45
 
-    -- Анимация убрана для минимализма
+    -- Animated background
+    task.spawn(function()
+        while LoaderGui.Parent do
+            tween(Gradient, TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Rotation = 135})
+            task.wait(4)
+            tween(Gradient, TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Rotation = 45})
+            task.wait(4)
+        end
+    end)
 
-    -- Центральный контейнер
+    -- Center container
     local Center = Instance.new("Frame")
-    Center.Size = UDim2.new(0, 320, 0, 220)
-    Center.Position = UDim2.new(0.5, -160, 0.5, -110)
+    Center.Size = UDim2.new(0, 350, 0, 280)
+    Center.Position = UDim2.new(0.5, -175, 0.5, -140)
     Center.BackgroundTransparency = 1
     Center.Parent = LoaderFrame
 
-    -- Логотип
-    local Logo = Instance.new("TextLabel", Center)
-    Logo.Size = UDim2.new(1, 0, 0, 55)
-    Logo.Position = UDim2.new(0, 0, 0, 10)
-    Logo.BackgroundTransparency = 1
-    Logo.Text = title
-    Logo.TextColor3 = Theme.Accent
-    Logo.Font = Enum.Font.GothamBlack
-    Logo.TextSize = 51
-    Logo.TextStrokeTransparency = 0.9
-    Logo.TextStrokeColor3 = Theme.Accent
+    -- Hexagon decoration
+    for i = 1, 6 do
+        local hex = Instance.new("Frame", Center)
+        hex.Size = UDim2.new(0, 60, 0, 60)
+        hex.Position = UDim2.new(0.5, -30 + math.cos(i * math.pi / 3) * 120, 0.5, -30 + math.sin(i * math.pi / 3) * 120)
+        hex.BackgroundColor3 = Theme.Accent
+        hex.BackgroundTransparency = 0.95
+        hex.BorderSizePixel = 0
+        hex.Rotation = 30
+        Instance.new("UICorner", hex).CornerRadius = UDim.new(0, 8)
 
-    -- Glow
-    local LogoGlow = Instance.new("TextLabel", Center)
-    LogoGlow.Size = UDim2.new(1, 0, 0, 55)
-    LogoGlow.Position = UDim2.new(0, 0, 0, 10)
+        task.spawn(function()
+            while LoaderGui.Parent do
+                tween(hex, TweenInfo.new(2 + i * 0.3, Enum.EasingStyle.Sine), {
+                    BackgroundTransparency = 0.85,
+                    Size = UDim2.new(0, 70, 0, 70),
+                    Position = UDim2.new(0.5, -35 + math.cos(i * math.pi / 3) * 120, 0.5, -35 + math.sin(i * math.pi / 3) * 120)
+                })
+                task.wait(2 + i * 0.3)
+                tween(hex, TweenInfo.new(2 + i * 0.3, Enum.EasingStyle.Sine), {
+                    BackgroundTransparency = 0.95,
+                    Size = UDim2.new(0, 60, 0, 60),
+                    Position = UDim2.new(0.5, -30 + math.cos(i * math.pi / 3) * 120, 0.5, -30 + math.sin(i * math.pi / 3) * 120)
+                })
+                task.wait(2 + i * 0.3)
+            end
+        end)
+    end
+
+    -- Logo with glow
+    local LogoContainer = Instance.new("Frame", Center)
+    LogoContainer.Size = UDim2.new(1, 0, 0, 70)
+    LogoContainer.Position = UDim2.new(0, 0, 0, 20)
+    LogoContainer.BackgroundTransparency = 1
+
+    local LogoGlow = Instance.new("TextLabel", LogoContainer)
+    LogoGlow.Size = UDim2.new(1, 0, 1, 0)
+    LogoGlow.Position = UDim2.new(0, 0, 0, 2)
     LogoGlow.BackgroundTransparency = 1
     LogoGlow.Text = title
     LogoGlow.TextColor3 = Theme.Accent
     LogoGlow.Font = Enum.Font.GothamBlack
-    LogoGlow.TextSize = 51
-    LogoGlow.TextTransparency = 0.75
-    LogoGlow.ZIndex = 0
+    LogoGlow.TextSize = 56
+    LogoGlow.TextTransparency = 0.85
 
-    -- Подзаголовок
+    local Logo = Instance.new("TextLabel", LogoContainer)
+    Logo.Size = UDim2.new(1, 0, 1, 0)
+    Logo.BackgroundTransparency = 1
+    Logo.Text = title
+    Logo.TextColor3 = Theme.Text
+    Logo.Font = Enum.Font.GothamBlack
+    Logo.TextSize = 56
+
+    -- Neon line under logo
+    local NeonLine = Instance.new("Frame", Center)
+    NeonLine.Size = UDim2.new(0, 0, 0, 2)
+    NeonLine.Position = UDim2.new(0.5, 0, 0, 95)
+    NeonLine.BackgroundColor3 = Theme.Accent
+    NeonLine.BorderSizePixel = 0
+    NeonLine.BackgroundTransparency = 0.3
+
+    tween(NeonLine, TweenInfo.new(1.5, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 200, 0, 2)})
+
+    -- Subtitle
     local Sub = Instance.new("TextLabel", Center)
-    Sub.Size = UDim2.new(1, 0, 0, 22)
-    Sub.Position = UDim2.new(0, 0, 0, 68)
+    Sub.Size = UDim2.new(1, 0, 0, 24)
+    Sub.Position = UDim2.new(0, 0, 0, 105)
     Sub.BackgroundTransparency = 1
     Sub.Text = subtitle
     Sub.TextColor3 = Theme.SubText
     Sub.Font = Enum.Font.GothamBold
-    Sub.TextSize = 17
-    Sub.TextTransparency = 0.3
+    Sub.TextSize = 18
+    Sub.TextTransparency = 0.4
 
-    -- Кольцо прогресса
+    -- Progress ring with neon effect
     local RingContainer = Instance.new("Frame", Center)
-    RingContainer.Size = UDim2.new(0, 90, 0, 90)
-    RingContainer.Position = UDim2.new(0.5, -45, 0.5, -15)
+    RingContainer.Size = UDim2.new(0, 110, 0, 110)
+    RingContainer.Position = UDim2.new(0.5, -55, 0.5, -10)
     RingContainer.BackgroundTransparency = 1
+
+    -- Outer glow ring
+    local RingGlow = Instance.new("Frame", RingContainer)
+    RingGlow.Size = UDim2.new(1, 8, 1, 8)
+    RingGlow.Position = UDim2.new(0, -4, 0, -4)
+    RingGlow.BackgroundColor3 = Theme.Accent
+    RingGlow.BackgroundTransparency = 0.9
+    RingGlow.BorderSizePixel = 0
+    Instance.new("UICorner", RingGlow).CornerRadius = UDim.new(1, 0)
 
     local RingBg = Instance.new("Frame", RingContainer)
     RingBg.Size = UDim2.new(1, 0, 1, 0)
-    RingBg.BackgroundColor3 = Color3.fromRGB(30, 20, 40)
+    RingBg.BackgroundColor3 = Color3.fromRGB(20, 15, 30)
     RingBg.BorderSizePixel = 0
     Instance.new("UICorner", RingBg).CornerRadius = UDim.new(1, 0)
 
     local RingFill = Instance.new("Frame", RingContainer)
-    RingFill.Size = UDim2.new(0.88, 0, 0.88, 0)
-    RingFill.Position = UDim2.new(0.06, 0, 0.06, 0)
+    RingFill.Size = UDim2.new(0.9, 0, 0.9, 0)
+    RingFill.Position = UDim2.new(0.05, 0, 0.05, 0)
     RingFill.BackgroundColor3 = Theme.Accent
     RingFill.BorderSizePixel = 0
     Instance.new("UICorner", RingFill).CornerRadius = UDim.new(1, 0)
 
     local RingInner = Instance.new("Frame", RingContainer)
-    RingInner.Size = UDim2.new(0.72, 0, 0.72, 0)
-    RingInner.Position = UDim2.new(0.14, 0, 0.14, 0)
-    RingInner.BackgroundColor3 = Color3.fromRGB(10, 5, 15)
+    RingInner.Size = UDim2.new(0.75, 0, 0.75, 0)
+    RingInner.Position = UDim2.new(0.125, 0, 0.125, 0)
+    RingInner.BackgroundColor3 = Color3.fromRGB(8, 8, 15)
     RingInner.BorderSizePixel = 0
     Instance.new("UICorner", RingInner).CornerRadius = UDim.new(1, 0)
 
@@ -188,82 +250,92 @@ local function CreateLoadingScreen(config)
     PercentText.Text = "0%"
     PercentText.TextColor3 = Theme.Text
     PercentText.Font = Enum.Font.GothamBold
-    PercentText.TextSize = 21
+    PercentText.TextSize = 24
 
-    -- Статус
+    -- Status with typing effect
     local StatusText = Instance.new("TextLabel", Center)
-    StatusText.Size = UDim2.new(1, 0, 0, 20)
-    StatusText.Position = UDim2.new(0, 0, 1, -28)
+    StatusText.Size = UDim2.new(1, 0, 0, 22)
+    StatusText.Position = UDim2.new(0, 0, 1, -35)
     StatusText.BackgroundTransparency = 1
-    StatusText.Text = "Initializing"
-    StatusText.TextColor3 = Theme.SubText
+    StatusText.Text = ""
+    StatusText.TextColor3 = Theme.Accent
     StatusText.Font = Enum.Font.Gotham
-    StatusText.TextSize = 15
+    StatusText.TextSize = 16
 
-    -- Частицы убраны для минимализма
-
-
-    -- Пульсация кольца
+    -- Pulsating ring animation
     task.spawn(function()
         while LoaderGui.Parent do
-            tween(RingFill, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-                Size = UDim2.new(0.92, 0, 0.92, 0),
-                Position = UDim2.new(0.04, 0, 0.04, 0)
+            tween(RingFill, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+                Size = UDim2.new(0.94, 0, 0.94, 0),
+                Position = UDim2.new(0.03, 0, 0.03, 0)
             })
-            task.wait(1)
-            tween(RingFill, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-                Size = UDim2.new(0.88, 0, 0.88, 0),
-                Position = UDim2.new(0.06, 0, 0.06, 0)
+            tween(RingGlow, TweenInfo.new(1.2), {BackgroundTransparency = 0.8})
+            task.wait(1.2)
+            tween(RingFill, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+                Size = UDim2.new(0.9, 0, 0.9, 0),
+                Position = UDim2.new(0.05, 0, 0.05, 0)
             })
-            task.wait(1)
+            tween(RingGlow, TweenInfo.new(1.2), {BackgroundTransparency = 0.9})
+            task.wait(1.2)
         end
     end)
 
-    -- Прогресс загрузки
+    -- Loading steps
     local steps = {
-        {0, "Initializing core"},
-        {15, "Loading modules"},
-        {30, "Connecting to server"},
-        {50, "Building interface"},
-        {70, "Loading ESP system"},
-        {85, "Finalizing"},
-        {100, "Ready"}
+        {0, "Initializing core systems"},
+        {15, "Loading neural modules"},
+        {30, "Establishing secure connection"},
+        {50, "Building holographic interface"},
+        {70, "Calibrating ESP sensors"},
+        {85, "Optimizing performance"},
+        {100, "System ready"}
     }
 
     local progress = 0
     local loadingActive = true
 
+    -- Typing effect function
+    local function typeText(text)
+        StatusText.Text = ""
+        for i = 1, #text do
+            if not loadingActive then return end
+            StatusText.Text = string.sub(text, 1, i)
+            task.wait(0.03)
+        end
+    end
+
     task.spawn(function()
         for _, step in ipairs(steps) do
             local target, status = step[1], step[2]
-            StatusText.Text = status
+            typeText(status)
 
             while progress < target do
                 progress = progress + 1
                 PercentText.Text = progress .. "%"
-                local scale = 0.72 + (progress / 100) * 0.16
+                local scale = 0.75 + (progress / 100) * 0.15
                 RingInner.Size = UDim2.new(scale, 0, scale, 0)
                 RingInner.Position = UDim2.new((1 - scale) / 2, 0, (1 - scale) / 2, 0)
                 task.wait(duration / 100)
             end
-            task.wait(0.3)
+            task.wait(0.4)
         end
 
-        task.wait(0.5)
+        task.wait(0.6)
         loadingActive = false
+        StatusText.Text = "Welcome, " .. (player.DisplayName or player.Name)
 
-        -- Fade out
-        tween(LoaderFrame, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1})
+        -- Fade out with style
+        tween(LoaderFrame, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1})
         for _, child in pairs(Center:GetDescendants()) do
             if child:IsA("TextLabel") then
-                tween(child, TweenInfo.new(0.6), {TextTransparency = 1})
+                tween(child, TweenInfo.new(0.8), {TextTransparency = 1})
             elseif child:IsA("Frame") and child ~= RingContainer then
-                tween(child, TweenInfo.new(0.6), {BackgroundTransparency = 1})
+                tween(child, TweenInfo.new(0.8), {BackgroundTransparency = 1})
             end
         end
-        tween(RingContainer, TweenInfo.new(0.6), {Size = UDim2.new(0, 0, 0, 0)})
+        tween(RingContainer, TweenInfo.new(0.8), {Size = UDim2.new(0, 0, 0, 0)})
 
-        task.wait(0.8)
+        task.wait(1)
         LoaderGui:Destroy()
     end)
 
@@ -271,11 +343,13 @@ local function CreateLoadingScreen(config)
 end
 
 -- ═══════════════════════════════════════════════════════════════
---  WATERMARK WITH CRATE TRACKER
+--  WATERMARK - Holographic Style with Stats
 -- ═══════════════════════════════════════════════════════════════
 local function CreateWatermark(config)
     config = config or {}
     local showCrates = config.ShowCrates ~= false
+    local showStats = config.ShowStats ~= false
+    local showTime = config.ShowTime ~= false
 
     local WatermarkGui = Instance.new("ScreenGui")
     WatermarkGui.Name = "GeminiWatermark"
@@ -284,127 +358,203 @@ local function CreateWatermark(config)
     WatermarkGui.Parent = CoreGui
 
     local WatermarkFrame = Instance.new("Frame", WatermarkGui)
-    WatermarkFrame.Size = UDim2.new(0, 400, 0, 55)
-    WatermarkFrame.Position = UDim2.new(0.5, -200, 0, 10)
-    WatermarkFrame.BackgroundColor3 = Color3.fromRGB(15, 5, 20)
+    WatermarkFrame.Size = UDim2.new(0, 420, 0, 70)
+    WatermarkFrame.Position = UDim2.new(0.5, -210, 0, 12)
+    WatermarkFrame.BackgroundColor3 = Color3.fromRGB(15, 10, 25)
+    WatermarkFrame.BackgroundTransparency = 0.15
     WatermarkFrame.BorderSizePixel = 0
     WatermarkFrame.ClipsDescendants = true
-    Instance.new("UICorner", WatermarkFrame).CornerRadius = UDim.new(0, 12)
+    Instance.new("UICorner", WatermarkFrame).CornerRadius = UDim.new(0, 14)
 
-    local Stroke = Instance.new("UIStroke", WatermarkFrame)
-    Stroke.Color = Theme.Accent
-    Stroke.Thickness = 1.5
-    Stroke.Transparency = 0.3
+    -- Glass effect overlay
+    local GlassOverlay = Instance.new("Frame", WatermarkFrame)
+    GlassOverlay.Size = UDim2.new(1, 0, 1, 0)
+    GlassOverlay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    GlassOverlay.BackgroundTransparency = 0.92
+    GlassOverlay.ZIndex = 2
+    Instance.new("UICorner", GlassOverlay).CornerRadius = UDim.new(0, 14)
 
-    local Glow = Instance.new("Frame", WatermarkFrame)
-    Glow.Size = UDim2.new(1, 0, 1, 0)
-    Glow.BackgroundColor3 = Theme.Accent
-    Glow.BackgroundTransparency = 0.9
-    Glow.ZIndex = 0
-    Instance.new("UICorner", Glow).CornerRadius = UDim.new(0, 12)
+    -- Neon border
+    local BorderGlow = Instance.new("Frame", WatermarkFrame)
+    BorderGlow.Size = UDim2.new(1, 4, 1, 4)
+    BorderGlow.Position = UDim2.new(0, -2, 0, -2)
+    BorderGlow.BackgroundColor3 = Theme.Accent
+    BorderGlow.BackgroundTransparency = 0.85
+    BorderGlow.ZIndex = -1
+    Instance.new("UICorner", BorderGlow).CornerRadius = UDim.new(0, 16)
 
+    -- Animated border pulse
     task.spawn(function()
         while WatermarkGui.Parent do
-            tween(Glow, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0.95})
+            tween(BorderGlow, TweenInfo.new(2, Enum.EasingStyle.Sine), {BackgroundTransparency = 0.75})
             task.wait(2)
-            tween(Glow, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0.85})
+            tween(BorderGlow, TweenInfo.new(2, Enum.EasingStyle.Sine), {BackgroundTransparency = 0.85})
             task.wait(2)
         end
     end)
 
-    -- Статус точка
+    -- Status dot with pulse
     local StatusDot = Instance.new("Frame", WatermarkFrame)
-    StatusDot.Size = UDim2.new(0, 8, 0, 8)
-    StatusDot.Position = UDim2.new(0, 16, 0, 13)
+    StatusDot.Size = UDim2.new(0, 10, 0, 10)
+    StatusDot.Position = UDim2.new(0, 18, 0, 16)
     StatusDot.BackgroundColor3 = Theme.Success
     StatusDot.BorderSizePixel = 0
+    StatusDot.ZIndex = 3
     Instance.new("UICorner", StatusDot).CornerRadius = UDim.new(1, 0)
+
+    local StatusDotGlow = Instance.new("Frame", StatusDot)
+    StatusDotGlow.Size = UDim2.new(1, 6, 1, 6)
+    StatusDotGlow.Position = UDim2.new(0, -3, 0, -3)
+    StatusDotGlow.BackgroundColor3 = Theme.Success
+    StatusDotGlow.BackgroundTransparency = 0.8
+    StatusDotGlow.ZIndex = 2
+    Instance.new("UICorner", StatusDotGlow).CornerRadius = UDim.new(1, 0)
 
     task.spawn(function()
         while WatermarkGui.Parent do
-            tween(StatusDot, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-                Size = UDim2.new(0, 10, 0, 10), Position = UDim2.new(0, 15, 0, 12)
+            tween(StatusDot, TweenInfo.new(1.2, Enum.EasingStyle.Sine), {
+                Size = UDim2.new(0, 12, 0, 12), Position = UDim2.new(0, 17, 0, 15)
             })
-            task.wait(1)
-            tween(StatusDot, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-                Size = UDim2.new(0, 8, 0, 8), Position = UDim2.new(0, 16, 0, 13)
+            tween(StatusDotGlow, TweenInfo.new(1.2), {BackgroundTransparency = 0.6})
+            task.wait(1.2)
+            tween(StatusDot, TweenInfo.new(1.2, Enum.EasingStyle.Sine), {
+                Size = UDim2.new(0, 10, 0, 10), Position = UDim2.new(0, 18, 0, 16)
             })
-            task.wait(1)
+            tween(StatusDotGlow, TweenInfo.new(1.2), {BackgroundTransparency = 0.8})
+            task.wait(1.2)
         end
     end)
 
-    -- Основной текст
+    -- Main title
     local WatermarkText = Instance.new("TextLabel", WatermarkFrame)
-    WatermarkText.Size = UDim2.new(1, -60, 0, 22)
-    WatermarkText.Position = UDim2.new(0, 35, 0, 6)
+    WatermarkText.Size = UDim2.new(1, -80, 0, 26)
+    WatermarkText.Position = UDim2.new(0, 38, 0, 8)
     WatermarkText.BackgroundTransparency = 1
-    WatermarkText.Text = config.Title or "◆ GEMINI PREMIUM | ACTIVE ◆"
+    WatermarkText.Text = config.Title or "◆ GEMINI PREMIUM v3.0 ◆"
     WatermarkText.TextColor3 = Theme.Accent
-    WatermarkText.Font = Enum.Font.GothamBold
-    WatermarkText.TextSize = 16
+    WatermarkText.Font = Enum.Font.GothamBlack
+    WatermarkText.TextSize = 18
     WatermarkText.TextXAlignment = Enum.TextXAlignment.Left
+    WatermarkText.ZIndex = 3
 
-    -- Разделитель
+    -- Subtitle with player info
+    local SubText = Instance.new("TextLabel", WatermarkFrame)
+    SubText.Size = UDim2.new(1, -80, 0, 18)
+    SubText.Position = UDim2.new(0, 38, 0, 32)
+    SubText.BackgroundTransparency = 1
+    SubText.Text = "User: " .. (player.DisplayName or player.Name) .. " | Executor: " .. (identifyexecutor and identifyexecutor() or "Unknown")
+    SubText.TextColor3 = Theme.SubText
+    SubText.Font = Enum.Font.Gotham
+    SubText.TextSize = 12
+    SubText.TextXAlignment = Enum.TextXAlignment.Left
+    SubText.ZIndex = 3
+
+    -- Divider
     local Divider = Instance.new("Frame", WatermarkFrame)
-    Divider.Size = UDim2.new(1, -20, 0, 1)
-    Divider.Position = UDim2.new(0, 10, 0, 32)
+    Divider.Size = UDim2.new(1, -24, 0, 1)
+    Divider.Position = UDim2.new(0, 12, 0, 52)
     Divider.BackgroundColor3 = Theme.Accent
     Divider.BorderSizePixel = 0
-    Divider.BackgroundTransparency = 0.6
+    Divider.BackgroundTransparency = 0.5
+    Divider.ZIndex = 3
 
-    -- Инфо о крейтах
+    -- Crate info
     local CrateInfo = Instance.new("TextLabel", WatermarkFrame)
-    CrateInfo.Size = UDim2.new(1, -20, 0, 18)
-    CrateInfo.Position = UDim2.new(0, 10, 0, 34)
+    CrateInfo.Size = UDim2.new(1, -20, 0, 16)
+    CrateInfo.Position = UDim2.new(0, 10, 0, 54)
     CrateInfo.BackgroundTransparency = 1
     CrateInfo.Text = showCrates and "Scanning for crates..." or ""
     CrateInfo.TextColor3 = Theme.SubText
     CrateInfo.Font = Enum.Font.Gotham
-    CrateInfo.TextSize = 14
+    CrateInfo.TextSize = 13
     CrateInfo.TextXAlignment = Enum.TextXAlignment.Center
     CrateInfo.RichText = true
+    CrateInfo.ZIndex = 3
 
-    -- Quick Loot кнопка
+    -- FPS Counter
+    local FPSLabel = Instance.new("TextLabel", WatermarkFrame)
+    FPSLabel.Size = UDim2.new(0, 60, 0, 16)
+    FPSLabel.Position = UDim2.new(1, -70, 0, 8)
+    FPSLabel.BackgroundTransparency = 1
+    FPSLabel.Text = "FPS: --"
+    FPSLabel.TextColor3 = Theme.Success
+    FPSLabel.Font = Enum.Font.GothamBold
+    FPSLabel.TextSize = 12
+    FPSLabel.TextXAlignment = Enum.TextXAlignment.Right
+    FPSLabel.ZIndex = 3
+
+    -- Time display
+    local TimeLabel = Instance.new("TextLabel", WatermarkFrame)
+    TimeLabel.Size = UDim2.new(0, 60, 0, 16)
+    TimeLabel.Position = UDim2.new(1, -70, 0, 24)
+    TimeLabel.BackgroundTransparency = 1
+    TimeLabel.Text = ""
+    TimeLabel.TextColor3 = Theme.SubText
+    TimeLabel.Font = Enum.Font.Gotham
+    TimeLabel.TextSize = 11
+    TimeLabel.TextXAlignment = Enum.TextXAlignment.Right
+    TimeLabel.ZIndex = 3
+
+    -- Quick Loot button
     local QuickLoot = Instance.new("TextButton", WatermarkFrame)
-    QuickLoot.Size = UDim2.new(0, 30, 0, 30)
-    QuickLoot.Position = UDim2.new(1, -35, 0, 3)
-    QuickLoot.BackgroundTransparency = 1
-    QuickLoot.Text = "🎯"
-    QuickLoot.TextSize = 19
-    QuickLoot.TextColor3 = Theme.Accent
+    QuickLoot.Size = UDim2.new(0, 32, 0, 32)
+    QuickLoot.Position = UDim2.new(1, -38, 0, 4)
+    QuickLoot.BackgroundColor3 = Theme.Accent
+    QuickLoot.BackgroundTransparency = 0.8
+    QuickLoot.Text = "⚡"
+    QuickLoot.TextSize = 18
+    QuickLoot.TextColor3 = Theme.Text
     QuickLoot.Font = Enum.Font.GothamBold
-
-    local Tooltip = Instance.new("TextLabel", WatermarkFrame)
-    Tooltip.Size = UDim2.new(0, 120, 0, 20)
-    Tooltip.Position = UDim2.new(1, -130, 0, 35)
-    Tooltip.BackgroundColor3 = Color3.fromRGB(30, 15, 40)
-    Tooltip.Text = "Quick Loot Best"
-    Tooltip.TextColor3 = Theme.Text
-    Tooltip.Font = Enum.Font.Gotham
-    Tooltip.TextSize = 13
-    Tooltip.Visible = false
-    Instance.new("UICorner", Tooltip).CornerRadius = UDim.new(0, 6)
+    QuickLoot.ZIndex = 3
+    QuickLoot.AutoButtonColor = false
+    Instance.new("UICorner", QuickLoot).CornerRadius = UDim.new(0, 8)
 
     QuickLoot.MouseEnter:Connect(function()
-        Tooltip.Visible = true
-        tween(QuickLoot, TweenInfo.new(0.2), {TextSize = 21})
+        tween(QuickLoot, TweenInfo.new(0.2), {BackgroundTransparency = 0.5, Size = UDim2.new(0, 34, 0, 34)})
     end)
     QuickLoot.MouseLeave:Connect(function()
-        Tooltip.Visible = false
-        tween(QuickLoot, TweenInfo.new(0.2), {TextSize = 19})
+        tween(QuickLoot, TweenInfo.new(0.2), {BackgroundTransparency = 0.8, Size = UDim2.new(0, 32, 0, 32)})
     end)
 
     QuickLoot.MouseButton1Click:Connect(function()
         tween(QuickLoot, TweenInfo.new(0.3), {Rotation = 360})
         task.wait(0.3)
         QuickLoot.Rotation = 0
-
         if _G.GeminiQuickLoot then
             _G.GeminiQuickLoot()
         end
     end)
 
-    -- Обновление инфы о крейтах
+    -- FPS counter loop
+    if showStats then
+        task.spawn(function()
+            local lastTime = tick()
+            local frameCount = 0
+            while WatermarkGui.Parent do
+                frameCount = frameCount + 1
+                local currentTime = tick()
+                if currentTime - lastTime >= 1 then
+                    FPSLabel.Text = "FPS: " .. frameCount
+                    frameCount = 0
+                    lastTime = currentTime
+                end
+                task.wait()
+            end
+        end)
+    end
+
+    -- Time update loop
+    if showTime then
+        task.spawn(function()
+            while WatermarkGui.Parent do
+                local timeStr = os.date("%H:%M:%S")
+                TimeLabel.Text = timeStr
+                task.wait(1)
+            end
+        end)
+    end
+
+    -- Crate scanning loop
     if showCrates then
         task.spawn(function()
             while WatermarkGui.Parent do
@@ -455,7 +605,7 @@ local function CreateWatermark(config)
 
                     CrateInfo.Text = string.format('<font color="rgb(%d,%d,%d)">★ %s</font> | %s', r, g, b, bestCrate.rarity:upper(), table.concat(parts, "  •  "))
                 else
-                    CrateInfo.Text = '<font color="rgb(150,150,150)">No crates detected</font>'
+                    CrateInfo.Text = '<font color="rgb(150,150,150)">No crates detected in workspace</font>'
                 end
 
                 tween(CrateInfo, TweenInfo.new(0.3), {TextTransparency = 0})
@@ -467,79 +617,116 @@ local function CreateWatermark(config)
     return WatermarkGui
 end
 
+
 -- ═══════════════════════════════════════════════════════════════
---  MAIN WINDOW CREATION
+--  MAIN WINDOW CREATION - Glassmorphism Design
 -- ═══════════════════════════════════════════════════════════════
 function GeminiLib:Init(config)
     config = config or {}
     local uiName = config.Name or "GeminiUI"
     local title = config.Title or "GEMINI PREMIUM | BUILD 2026"
 
-    -- Очистка
+    -- Cleanup
     if CoreGui:FindFirstChild(uiName) then CoreGui[uiName]:Destroy() end
     if CoreGui:FindFirstChild("GeminiWatermark") then CoreGui:FindFirstChild("GeminiWatermark"):Destroy() end
     if CoreGui:FindFirstChild("GeminiLoader") then CoreGui:FindFirstChild("GeminiLoader"):Destroy() end
     if CoreGui:FindFirstChild("GeminiESP") then CoreGui:FindFirstChild("GeminiESP"):Destroy() end
 
-    -- Глобальные настройки
+    -- Global settings
     _G.GeminiConfig = {
         FarmEnabled = false,
         TweenSpeed = 1200,
         ESPEnabled = false,
-        SelectedRarities = {Secret = true, Godly = true, Mythic = true, Legendary = false, Epic = false, Rare = false, Uncommon = false, Common = false}
+        SelectedRarities = {Secret = true, Godly = true, Mythic = true, Legendary = false, Epic = false, Rare = false, Uncommon = false, Common = false},
+        ToggleKey = Enum.KeyCode.Insert,
+        UITheme = "Dark",
+        Notifications = true,
+        SoundEffects = true
     }
 
-    -- Загрузочный экран
+    -- Loading screen
     CreateLoadingScreen(config.Loading)
 
     -- Watermark
     local WatermarkGui = CreateWatermark(config.Watermark)
 
-    -- Основной GUI
+    -- Main GUI
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = uiName
     ScreenGui.IgnoreGuiInset = true
     ScreenGui.Enabled = false
     ScreenGui.Parent = CoreGui
 
-    -- Main Frame
+    -- Main Frame with glass effect
     local MainFrame = Instance.new("Frame", ScreenGui)
     MainFrame.Size = FrameSize
     MainFrame.Position = FramePos
     MainFrame.BackgroundColor3 = Theme.Main
+    MainFrame.BackgroundTransparency = 0.05
     MainFrame.BorderSizePixel = 0
     MainFrame.ClipsDescendants = true
-    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
+    -- Glass overlay
+    local GlassEffect = Instance.new("Frame", MainFrame)
+    GlassEffect.Name = "GlassEffect"
+    GlassEffect.Size = UDim2.new(1, 0, 1, 0)
+    GlassEffect.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    GlassEffect.BackgroundTransparency = 0.94
+    GlassEffect.ZIndex = 0
+    Instance.new("UICorner", GlassEffect).CornerRadius = UDim.new(0, 12)
+
+    -- Neon glow border
     local MainGlow = Instance.new("Frame", MainFrame)
     MainGlow.Name = "MainGlow"
-    MainGlow.Size = UDim2.new(1, 0, 1, 0)
+    MainGlow.Size = UDim2.new(1, 6, 1, 6)
+    MainGlow.Position = UDim2.new(0, -3, 0, -3)
     MainGlow.BackgroundColor3 = Theme.Accent
-    MainGlow.BackgroundTransparency = 0.95
+    MainGlow.BackgroundTransparency = 0.92
     MainGlow.ZIndex = -1
     MainGlow.BorderSizePixel = 0
-    Instance.new("UICorner", MainGlow).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", MainGlow).CornerRadius = UDim.new(0, 14)
+
+    -- Animated glow
+    task.spawn(function()
+        while ScreenGui.Parent do
+            tween(MainGlow, TweenInfo.new(3, Enum.EasingStyle.Sine), {BackgroundTransparency = 0.88})
+            task.wait(3)
+            tween(MainGlow, TweenInfo.new(3, Enum.EasingStyle.Sine), {BackgroundTransparency = 0.92})
+            task.wait(3)
+        end
+    end)
 
     local MainStroke = Instance.new("UIStroke", MainFrame)
     MainStroke.Color = Theme.Accent
-    MainStroke.Thickness = 1
-    MainStroke.Transparency = 0.6
+    MainStroke.Thickness = 1.5
+    MainStroke.Transparency = 0.5
 
-    -- TopBar
+    -- TopBar with gradient
     local TopBar = Instance.new("Frame", MainFrame)
-    TopBar.Size = UDim2.new(1, 0, 0, 40)
+    TopBar.Size = UDim2.new(1, 0, 0, 44)
     TopBar.BackgroundTransparency = 1
     TopBar.ZIndex = 2
 
     local TopGradient = Instance.new("Frame", TopBar)
-    TopGradient.Size = UDim2.new(1, 0, 0, 2)
-    TopGradient.Position = UDim2.new(0, 0, 1, -2)
+    TopGradient.Size = UDim2.new(1, 0, 0, 3)
+    TopGradient.Position = UDim2.new(0, 0, 1, -3)
     TopGradient.BackgroundColor3 = Theme.Accent
     TopGradient.BorderSizePixel = 0
-    TopGradient.BackgroundTransparency = 0.5
+    TopGradient.BackgroundTransparency = 0.4
+
+    -- Animated top gradient
+    task.spawn(function()
+        while ScreenGui.Parent do
+            tween(TopGradient, TweenInfo.new(2), {BackgroundTransparency = 0.2})
+            task.wait(2)
+            tween(TopGradient, TweenInfo.new(2), {BackgroundTransparency = 0.4})
+            task.wait(2)
+        end
+    end)
 
     local TitleLabel = Instance.new("TextLabel", TopBar)
-    TitleLabel.Size = UDim2.new(0, 250, 1, 0)
+    TitleLabel.Size = UDim2.new(0, 300, 1, 0)
     TitleLabel.Position = UDim2.new(0, 85, 0, 0)
     TitleLabel.Text = title
     TitleLabel.TextColor3 = Theme.SubText
@@ -548,24 +735,24 @@ function GeminiLib:Init(config)
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- Mac Buttons
+    -- Mac Buttons with enhanced hover
     local MacBtns = Instance.new("Frame", TopBar)
-    MacBtns.Size = UDim2.new(0, 70, 1, 0)
-    MacBtns.Position = UDim2.new(0, 15, 0, 0)
+    MacBtns.Size = UDim2.new(0, 80, 1, 0)
+    MacBtns.Position = UDim2.new(0, 18, 0, 0)
     MacBtns.BackgroundTransparency = 1
 
     local function animateBtnHover(btn, color)
         btn.MouseEnter:Connect(function()
-            tween(btn, TweenInfo.new(0.2), {Size = UDim2.new(0, 14, 0, 14)})
-            tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = color:Lerp(Color3.fromRGB(255,255,255), 0.3)})
+            tween(btn, TweenInfo.new(0.2), {Size = UDim2.new(0, 16, 0, 16)})
+            tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = color:Lerp(Color3.fromRGB(255,255,255), 0.4)})
         end)
         btn.MouseLeave:Connect(function()
-            tween(btn, TweenInfo.new(0.2), {Size = UDim2.new(0, 12, 0, 12)})
+            tween(btn, TweenInfo.new(0.2), {Size = UDim2.new(0, 14, 0, 14)})
             tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = color})
         end)
     end
 
-        local isMinimized = false
+    local isMinimized = false
     local originalTransparency = {}
 
     local function createMacBtn(color, xOffset, action)
@@ -603,7 +790,6 @@ function GeminiLib:Init(config)
     createMacBtn(Theme.Hide, MacBtnOffset, function()
         isMinimized = not isMinimized
         if isMinimized then
-            -- Сохраняем и скрываем ВСЁ кроме TopBar
             local function saveAndHide(obj)
                 if obj:IsA("GuiObject") then
                     originalTransparency[obj] = {
@@ -618,34 +804,30 @@ function GeminiLib:Init(config)
                 for _, c in pairs(obj:GetChildren()) do saveAndHide(c) end
             end
 
-            -- Скрываем всё КРОМЕ TopBar
             for _, child in pairs(MainFrame:GetChildren()) do
                 if child ~= TopBar then
                     saveAndHide(child)
                 end
             end
-            -- Скрываем содержимое TopBar кроме MacBtns
             for _, child in pairs(TopBar:GetChildren()) do
                 if child ~= MacBtns then
                     saveAndHide(child)
                 end
             end
 
-            -- Свертываем в маленькую плашку (только TopBar виден)
             tween(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-                Size = UDim2.new(0, 140 * UIScale, 0, 40 * UIScale),
+                Size = UDim2.new(0, 160 * UIScale, 0, 44 * UIScale),
                 Position = UDim2.new(MainFrame.Position.X.Scale, MainFrame.Position.X.Offset, MainFrame.Position.Y.Scale, MainFrame.Position.Y.Offset),
                 BackgroundTransparency = 0.9
             })
             tween(MainStroke, TweenInfo.new(0.3), {Transparency = 0.8})
             tween(MainGlow, TweenInfo.new(0.3), {BackgroundTransparency = 1})
         else
-            -- Восстанавливаем
             tween(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                Size = FrameSize, Position = FramePos, BackgroundTransparency = 0
+                Size = FrameSize, Position = FramePos, BackgroundTransparency = 0.05
             })
-            tween(MainStroke, TweenInfo.new(0.4), {Transparency = 0.4})
-            tween(MainGlow, TweenInfo.new(0.4), {BackgroundTransparency = 0.95})
+            tween(MainStroke, TweenInfo.new(0.4), {Transparency = 0.5})
+            tween(MainGlow, TweenInfo.new(0.4), {BackgroundTransparency = 0.92})
 
             local function restore(obj)
                 if originalTransparency[obj] then
@@ -671,22 +853,22 @@ function GeminiLib:Init(config)
 
     createMacBtn(Theme.Success, MacBtnOffset * 2)
 
-    -- Dragging
+    -- Dragging with scale effect
     local dragging, dragStart, startPos
     TopBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = MainFrame.Position
-            
-            local currentSize = isMinimized and UDim2.new(0, 140 * UIScale, 0, 40 * UIScale) or FrameSize
-            tween(MainFrame, TweenInfo.new(0.2), {Size = UDim2.new(currentSize.X.Scale, currentSize.X.Offset + 5, currentSize.Y.Scale, currentSize.Y.Offset + 5)})
-            
+
+            local currentSize = isMinimized and UDim2.new(0, 160 * UIScale, 0, 44 * UIScale) or FrameSize
+            tween(MainFrame, TweenInfo.new(0.2), {Size = UDim2.new(currentSize.X.Scale, currentSize.X.Offset + 4, currentSize.Y.Scale, currentSize.Y.Offset + 4)})
+
             local connection
             connection = input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
-                    local endSize = isMinimized and UDim2.new(0, 140 * UIScale, 0, 40 * UIScale) or FrameSize
+                    local endSize = isMinimized and UDim2.new(0, 160 * UIScale, 0, 44 * UIScale) or FrameSize
                     tween(MainFrame, TweenInfo.new(0.2), {Size = endSize})
                     if connection then connection:Disconnect() end
                 end
@@ -700,80 +882,200 @@ function GeminiLib:Init(config)
             MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
--- Insert toggle
-    UserInputService.InputBegan:Connect(function(input, gpe)
-        if not gpe and input.KeyCode == Enum.KeyCode.Insert then
-            if MainFrame.Visible then
-                tween(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-                    Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)
-                })
-                task.wait(0.4)
-                MainFrame.Visible = false
-            else
-                MainFrame.Visible = true
-                MainFrame.Size = UDim2.new(0, 0, 0, 0)
-                MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-                
-                local targetSize = isMinimized and UDim2.new(0, 140 * UIScale, 0, 40 * UIScale) or FrameSize
-                tween(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                    Size = targetSize, Position = FramePos
-                })
+
+    -- Toggle key (configurable)
+    local toggleConnection = nil
+    local function setupToggleKey(keyCode)
+        if toggleConnection then toggleConnection:Disconnect() end
+        toggleConnection = UserInputService.InputBegan:Connect(function(input, gpe)
+            if not gpe and input.KeyCode == keyCode then
+                if MainFrame.Visible then
+                    tween(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+                        Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)
+                    })
+                    task.wait(0.4)
+                    MainFrame.Visible = false
+                else
+                    MainFrame.Visible = true
+                    MainFrame.Size = UDim2.new(0, 0, 0, 0)
+                    MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+
+                    local targetSize = isMinimized and UDim2.new(0, 160 * UIScale, 0, 44 * UIScale) or FrameSize
+                    tween(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                        Size = targetSize, Position = FramePos
+                    })
+                end
             end
-        end
-    end)
+        end)
+    end
+    setupToggleKey(_G.GeminiConfig.ToggleKey)
 
-    -- Sidebar
+    -- Sidebar with glass effect
     local Sidebar = Instance.new("Frame", MainFrame)
-    Sidebar.Size = UDim2.new(0, SidebarWidth, 1, -40)
-    Sidebar.Position = UDim2.new(0, 0, 0, 40)
+    Sidebar.Size = UDim2.new(0, SidebarWidth, 1, -44)
+    Sidebar.Position = UDim2.new(0, 0, 0, 44)
     Sidebar.BackgroundColor3 = Theme.Sidebar
+    Sidebar.BackgroundTransparency = 0.1
     Sidebar.BorderSizePixel = 0
-    Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 12)
 
-    local Divider = Instance.new("Frame", MainFrame)
-    Divider.Size = UDim2.new(0, 1, 1, -50)
-    Divider.Position = UDim2.new(0, SidebarWidth + 5, 0, 45)
-    Divider.BackgroundColor3 = Theme.Accent
-    Divider.BorderSizePixel = 0
-    Divider.BackgroundTransparency = 0.7
+    local SidebarGlow = Instance.new("Frame", Sidebar)
+    SidebarGlow.Size = UDim2.new(0, 2, 1, 0)
+    SidebarGlow.Position = UDim2.new(1, -2, 0, 0)
+    SidebarGlow.BackgroundColor3 = Theme.Accent
+    SidebarGlow.BackgroundTransparency = 0.7
+    SidebarGlow.BorderSizePixel = 0
 
     local TabContainer = Instance.new("ScrollingFrame", Sidebar)
-    TabContainer.Size = UDim2.new(1, 0, 1, -50)
+    TabContainer.Size = UDim2.new(1, 0, 1, -55)
     TabContainer.Position = UDim2.new(0, 0, 0, 10)
     TabContainer.BackgroundTransparency = 1
     TabContainer.ScrollBarThickness = 0
     local TabList = Instance.new("UIListLayout", TabContainer)
-    TabList.Padding = UDim.new(0, 6)
+    TabList.Padding = UDim.new(0, 8)
     TabList.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-    local StatusLabel = Instance.new("TextLabel", Sidebar)
-    StatusLabel.Size = UDim2.new(1, 0, 0, 35)
-    StatusLabel.Position = UDim2.new(0, 0, 1, -35)
+    -- Status bar at bottom of sidebar
+    local StatusBar = Instance.new("Frame", Sidebar)
+    StatusBar.Size = UDim2.new(1, 0, 0, 40)
+    StatusBar.Position = UDim2.new(0, 0, 1, -40)
+    StatusBar.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+    StatusBar.BackgroundTransparency = 0.3
+    StatusBar.BorderSizePixel = 0
+
+    local StatusBarCorner = Instance.new("UICorner", StatusBar)
+    StatusBarCorner.CornerRadius = UDim.new(0, 8)
+
+    local StatusLabel = Instance.new("TextLabel", StatusBar)
+    StatusLabel.Size = UDim2.new(1, -10, 0, 20)
+    StatusLabel.Position = UDim2.new(0, 5, 0, 2)
     StatusLabel.BackgroundTransparency = 1
-    StatusLabel.Text = "Crates: 0"
+    StatusLabel.Text = "Target Crates: 0"
     StatusLabel.TextColor3 = Theme.Accent
     StatusLabel.Font = Enum.Font.GothamBold
-    StatusLabel.TextSize = 14
+    StatusLabel.TextSize = 13
 
-    local StatusGlow = Instance.new("Frame", StatusLabel)
-    StatusGlow.Size = UDim2.new(1, -20, 0, 1)
-    StatusGlow.Position = UDim2.new(0, 10, 0, 0)
-    StatusGlow.BackgroundColor3 = Theme.Accent
-    StatusGlow.BorderSizePixel = 0
-    StatusGlow.BackgroundTransparency = 0.5
+    local StatusSub = Instance.new("TextLabel", StatusBar)
+    StatusSub.Size = UDim2.new(1, -10, 0, 16)
+    StatusSub.Position = UDim2.new(0, 5, 0, 20)
+    StatusSub.BackgroundTransparency = 1
+    StatusSub.Text = "Ready"
+    StatusSub.TextColor3 = Theme.SubText
+    StatusSub.Font = Enum.Font.Gotham
+    StatusSub.TextSize = 11
 
     -- Container
     local Container = Instance.new("Frame", MainFrame)
     Container.Size = UDim2.new(1, -SidebarWidth - 25, 1, -55)
-    Container.Position = UDim2.new(0, SidebarWidth + 15, 0, 50)
+    Container.Position = UDim2.new(0, SidebarWidth + 15, 0, 52)
     Container.BackgroundTransparency = 1
+
+
+    -- ═══════════════════════════════════════════════════════════════
+    --  NOTIFICATION SYSTEM
+    -- ═══════════════════════════════════════════════════════════════
+    local NotificationGui = Instance.new("ScreenGui", CoreGui)
+    NotificationGui.Name = "GeminiNotifications"
+    NotificationGui.IgnoreGuiInset = true
+    NotificationGui.ResetOnSpawn = false
+
+    local NotifContainer = Instance.new("Frame", NotificationGui)
+    NotifContainer.Size = UDim2.new(0, 300, 1, 0)
+    NotifContainer.Position = UDim2.new(1, -320, 0, 20)
+    NotifContainer.BackgroundTransparency = 1
+
+    local NotifList = Instance.new("UIListLayout", NotifContainer)
+    NotifList.Padding = UDim.new(0, 10)
+    NotifList.HorizontalAlignment = Enum.HorizontalAlignment.Right
+    NotifList.VerticalAlignment = Enum.VerticalAlignment.Top
+
+    function Window:Notify(title, message, duration, notifType)
+        if not _G.GeminiConfig.Notifications then return end
+        duration = duration or 3
+        notifType = notifType or "info"
+
+        local colors = {
+            info = Theme.Accent,
+            success = Theme.Success,
+            warning = Theme.Hide,
+            error = Theme.Close
+        }
+        local color = colors[notifType] or Theme.Accent
+
+        local notif = Instance.new("Frame", NotifContainer)
+        notif.Size = UDim2.new(0, 280, 0, 0)
+        notif.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        notif.BackgroundTransparency = 0.1
+        notif.BorderSizePixel = 0
+        notif.ClipsDescendants = true
+        Instance.new("UICorner", notif).CornerRadius = UDim.new(0, 10)
+
+        local notifStroke = Instance.new("UIStroke", notif)
+        notifStroke.Color = color
+        notifStroke.Thickness = 1.5
+        notifStroke.Transparency = 0.4
+
+        local notifGlow = Instance.new("Frame", notif)
+        notifGlow.Size = UDim2.new(1, 4, 1, 4)
+        notifGlow.Position = UDim2.new(0, -2, 0, -2)
+        notifGlow.BackgroundColor3 = color
+        notifGlow.BackgroundTransparency = 0.9
+        notifGlow.ZIndex = -1
+        Instance.new("UICorner", notifGlow).CornerRadius = UDim.new(0, 12)
+
+        local titleLbl = Instance.new("TextLabel", notif)
+        titleLbl.Size = UDim2.new(1, -20, 0, 22)
+        titleLbl.Position = UDim2.new(0, 12, 0, 8)
+        titleLbl.BackgroundTransparency = 1
+        titleLbl.Text = title
+        titleLbl.TextColor3 = color
+        titleLbl.Font = Enum.Font.GothamBold
+        titleLbl.TextSize = 15
+        titleLbl.TextXAlignment = Enum.TextXAlignment.Left
+
+        local msgLbl = Instance.new("TextLabel", notif)
+        msgLbl.Size = UDim2.new(1, -20, 0, 40)
+        msgLbl.Position = UDim2.new(0, 12, 0, 30)
+        msgLbl.BackgroundTransparency = 1
+        msgLbl.Text = message
+        msgLbl.TextColor3 = Theme.Text
+        msgLbl.Font = Enum.Font.Gotham
+        msgLbl.TextSize = 13
+        msgLbl.TextXAlignment = Enum.TextXAlignment.Left
+        msgLbl.TextWrapped = true
+
+        local progressBar = Instance.new("Frame", notif)
+        progressBar.Size = UDim2.new(1, 0, 0, 3)
+        progressBar.Position = UDim2.new(0, 0, 1, -3)
+        progressBar.BackgroundColor3 = color
+        progressBar.BorderSizePixel = 0
+        progressBar.BackgroundTransparency = 0.3
+
+        tween(notif, TweenInfo.new(0.4, Enum.EasingStyle.Back), {Size = UDim2.new(0, 280, 0, 75)})
+
+        task.delay(duration, function()
+            tween(progressBar, TweenInfo.new(0.3), {Size = UDim2.new(0, 0, 0, 3)})
+            tween(notif, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+                Size = UDim2.new(0, 280, 0, 0),
+                BackgroundTransparency = 1
+            })
+            for _, child in pairs(notif:GetDescendants()) do
+                if child:IsA("TextLabel") then
+                    tween(child, TweenInfo.new(0.3), {TextTransparency = 1})
+                elseif child:IsA("Frame") then
+                    tween(child, TweenInfo.new(0.3), {BackgroundTransparency = 1})
+                end
+            end
+            task.wait(0.4)
+            notif:Destroy()
+        end)
+    end
 
     -- ═══════════════════════════════════════════════════════════════
     --  TAB SYSTEM
     -- ═══════════════════════════════════════════════════════════════
     local Tabs = {}
     local ActiveTab = nil
-
     local Window = {}
 
     function Window:AddTab(name, icon)
@@ -781,36 +1083,47 @@ function GeminiLib:Init(config)
         Page.Size = UDim2.new(1, 0, 1, 0)
         Page.BackgroundTransparency = 1
         Page.Visible = false
-        Page.ScrollBarThickness = 3
+        Page.ScrollBarThickness = 4
         Page.ScrollBarImageColor3 = Theme.Accent
-        Page.ScrollBarImageTransparency = 0.5
+        Page.ScrollBarImageTransparency = 0.4
         Page.AutomaticCanvasSize = Enum.AutomaticSize.Y
-        Instance.new("UIListLayout", Page).Padding = UDim.new(0, 10)
+        Instance.new("UIListLayout", Page).Padding = UDim.new(0, 12)
 
         local pad = Instance.new("UIPadding", Page)
-        pad.PaddingTop = UDim.new(0, 5)
-        pad.PaddingBottom = UDim.new(0, 10)
-        pad.PaddingLeft = UDim.new(0, 5)
-        pad.PaddingRight = UDim.new(0, 5)
+        pad.PaddingTop = UDim.new(0, 8)
+        pad.PaddingBottom = UDim.new(0, 15)
+        pad.PaddingLeft = UDim.new(0, 8)
+        pad.PaddingRight = UDim.new(0, 8)
 
         local TabBtn = Instance.new("TextButton", TabContainer)
-        TabBtn.Size = UDim2.new(0.9, 0, 0, 44)
+        TabBtn.Size = UDim2.new(0.88, 0, 0, 48)
         TabBtn.BackgroundColor3 = Theme.Element
         TabBtn.Text = (icon or "▸") .. "  " .. name
         TabBtn.TextColor3 = Theme.SubText
         TabBtn.Font = Enum.Font.GothamSemibold
         TabBtn.TextSize = 15
         TabBtn.AutoButtonColor = false
-        Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 8)
+        Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 10)
+
+        -- Tab button glow effect
+        local TabGlow = Instance.new("Frame", TabBtn)
+        TabGlow.Size = UDim2.new(0, 3, 0.6, 0)
+        TabGlow.Position = UDim2.new(0, 0, 0.2, 0)
+        TabGlow.BackgroundColor3 = Theme.Accent
+        TabGlow.BackgroundTransparency = 1
+        TabGlow.BorderSizePixel = 0
+        Instance.new("UICorner", TabGlow).CornerRadius = UDim.new(0, 2)
 
         TabBtn.MouseEnter:Connect(function()
             if ActiveTab ~= Tab then
-                tween(TabBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 25, 55)})
+                tween(TabBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.ElementHover})
+                tween(TabGlow, TweenInfo.new(0.2), {BackgroundTransparency = 0.6})
             end
         end)
         TabBtn.MouseLeave:Connect(function()
             if ActiveTab ~= Tab then
                 tween(TabBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element})
+                tween(TabGlow, TweenInfo.new(0.2), {BackgroundTransparency = 1})
             end
         end)
 
@@ -818,23 +1131,26 @@ function GeminiLib:Init(config)
         Tab.Page = Page
         Tab.Button = TabBtn
         Tab.Name = name
+        Tab.Glow = TabGlow
 
         function Tab:Select()
             if ActiveTab then
                 ActiveTab.Page.Visible = false
                 tween(ActiveTab.Button, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element, TextColor3 = Theme.SubText})
+                tween(ActiveTab.Glow, TweenInfo.new(0.2), {BackgroundTransparency = 1})
             end
             ActiveTab = Tab
             Page.Visible = true
             tween(TabBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent, TextColor3 = Theme.Main})
+            tween(TabGlow, TweenInfo.new(0.2), {BackgroundTransparency = 0, Size = UDim2.new(0, 3, 0.8, 0), Position = UDim2.new(0, 0, 0.1, 0)})
 
-            -- Анимация элементов
+            -- Staggered animation for elements
             for i, child in pairs(Page:GetChildren()) do
                 if child:IsA("Frame") or child:IsA("TextButton") then
                     local origPos = child.Position
-                    child.Position = child.Position + UDim2.new(0, 15, 0, 0)
-                    child.BackgroundTransparency = 0.3
-                    tween(child, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, i * 0.04), {
+                    child.Position = child.Position + UDim2.new(0, 20, 0, 0)
+                    child.BackgroundTransparency = 0.4
+                    tween(child, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, i * 0.05), {
                         Position = origPos, BackgroundTransparency = 0
                     })
                 end
@@ -848,9 +1164,43 @@ function GeminiLib:Init(config)
         -- ═══════════════════════════════════════════════════════════════
         --  COMPONENTS
         -- ═══════════════════════════════════════════════════════════════
+
+        -- Section header
+        function Tab:AddSection(text)
+            local section = Instance.new("Frame", Page)
+            section.Size = UDim2.new(1, 0, 0, 36)
+            section.BackgroundTransparency = 1
+
+            local line = Instance.new("Frame", section)
+            line.Size = UDim2.new(0.3, 0, 0, 2)
+            line.Position = UDim2.new(0, 0, 0.5, -1)
+            line.BackgroundColor3 = Theme.Accent
+            line.BackgroundTransparency = 0.5
+            line.BorderSizePixel = 0
+
+            local label = Instance.new("TextLabel", section)
+            label.Size = UDim2.new(0.4, 0, 1, 0)
+            label.Position = UDim2.new(0.3, 0, 0, 0)
+            label.BackgroundTransparency = 1
+            label.Text = text
+            label.TextColor3 = Theme.Accent
+            label.Font = Enum.Font.GothamBold
+            label.TextSize = 14
+            label.TextXAlignment = Enum.TextXAlignment.Center
+
+            local line2 = Instance.new("Frame", section)
+            line2.Size = UDim2.new(0.3, 0, 0, 2)
+            line2.Position = UDim2.new(0.7, 0, 0.5, -1)
+            line2.BackgroundColor3 = Theme.Accent
+            line2.BackgroundTransparency = 0.5
+            line2.BorderSizePixel = 0
+
+            return section
+        end
+
         function Tab:AddToggle(text, callback)
             local btn = Instance.new("TextButton", Page)
-            btn.Size = UDim2.new(1, 0, 0, 54)
+            btn.Size = UDim2.new(1, 0, 0, 56)
             btn.BackgroundColor3 = Theme.Element
             btn.Text = "  " .. text
             btn.TextColor3 = Theme.Text
@@ -858,32 +1208,32 @@ function GeminiLib:Init(config)
             btn.Font = Enum.Font.Gotham
             btn.TextSize = 16
             btn.AutoButtonColor = false
-            Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+            Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 12)
 
             btn.MouseEnter:Connect(function()
-                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 25, 55)})
+                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.ElementHover})
             end)
             btn.MouseLeave:Connect(function()
                 tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element})
             end)
 
             local IndContainer = Instance.new("Frame", btn)
-            IndContainer.Size = UDim2.new(0, 44, 0, 22)
-            IndContainer.Position = UDim2.new(1, -56, 0.5, -11)
-            IndContainer.BackgroundColor3 = Color3.fromRGB(25, 15, 35)
+            IndContainer.Size = UDim2.new(0, 48, 0, 24)
+            IndContainer.Position = UDim2.new(1, -62, 0.5, -12)
+            IndContainer.BackgroundColor3 = Color3.fromRGB(20, 15, 30)
             IndContainer.BorderSizePixel = 0
             Instance.new("UICorner", IndContainer).CornerRadius = UDim.new(1, 0)
 
             local Ind = Instance.new("Frame", IndContainer)
-            Ind.Size = UDim2.new(0, 18, 0, 18)
-            Ind.Position = UDim2.new(0, 2, 0.5, -9)
-            Ind.BackgroundColor3 = Color3.fromRGB(60, 40, 70)
+            Ind.Size = UDim2.new(0, 20, 0, 20)
+            Ind.Position = UDim2.new(0, 2, 0.5, -10)
+            Ind.BackgroundColor3 = Color3.fromRGB(60, 50, 75)
             Ind.BorderSizePixel = 0
             Instance.new("UICorner", Ind).CornerRadius = UDim.new(1, 0)
 
             local IndGlow = Instance.new("Frame", Ind)
-            IndGlow.Size = UDim2.new(1, 4, 1, 4)
-            IndGlow.Position = UDim2.new(0, -2, 0, -2)
+            IndGlow.Size = UDim2.new(1, 6, 1, 6)
+            IndGlow.Position = UDim2.new(0, -3, 0, -3)
             IndGlow.BackgroundColor3 = Theme.Accent
             IndGlow.BackgroundTransparency = 1
             IndGlow.ZIndex = -1
@@ -894,15 +1244,15 @@ function GeminiLib:Init(config)
                 state = not state
                 if state then
                     tween(Ind, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                        Position = UDim2.new(1, -20, 0.5, -9), BackgroundColor3 = Theme.Accent
+                        Position = UDim2.new(1, -22, 0.5, -10), BackgroundColor3 = Theme.Accent
                     })
-                    tween(IndContainer, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(40, 20, 50)})
-                    tween(IndGlow, TweenInfo.new(0.3), {BackgroundTransparency = 0.7})
+                    tween(IndContainer, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(30, 20, 45)})
+                    tween(IndGlow, TweenInfo.new(0.3), {BackgroundTransparency = 0.6})
                 else
                     tween(Ind, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                        Position = UDim2.new(0, 2, 0.5, -9), BackgroundColor3 = Color3.fromRGB(60, 40, 70)
+                        Position = UDim2.new(0, 2, 0.5, -10), BackgroundColor3 = Color3.fromRGB(60, 50, 75)
                     })
-                    tween(IndContainer, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(25, 15, 35)})
+                    tween(IndContainer, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(20, 15, 30)})
                     tween(IndGlow, TweenInfo.new(0.3), {BackgroundTransparency = 1})
                 end
                 if callback then callback(state) end
@@ -913,20 +1263,20 @@ function GeminiLib:Init(config)
 
         function Tab:AddSlider(text, min, max, default, callback)
             local frame = Instance.new("Frame", Page)
-            frame.Size = UDim2.new(1, 0, 0, 80)
+            frame.Size = UDim2.new(1, 0, 0, 85)
             frame.BackgroundColor3 = Theme.Element
-            Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+            Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
             frame.MouseEnter:Connect(function()
-                tween(frame, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 25, 55)})
+                tween(frame, TweenInfo.new(0.2), {BackgroundColor3 = Theme.ElementHover})
             end)
             frame.MouseLeave:Connect(function()
                 tween(frame, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element})
             end)
 
             local label = Instance.new("TextLabel", frame)
-            label.Size = UDim2.new(1, -20, 0, 25)
-            label.Position = UDim2.new(0, 12, 0, 8)
+            label.Size = UDim2.new(1, -20, 0, 26)
+            label.Position = UDim2.new(0, 14, 0, 10)
             label.Text = text .. ": " .. default
             label.TextColor3 = Theme.Text
             label.Font = Enum.Font.Gotham
@@ -935,9 +1285,9 @@ function GeminiLib:Init(config)
             label.TextXAlignment = Enum.TextXAlignment.Left
 
             local bar = Instance.new("Frame", frame)
-            bar.Size = UDim2.new(1, -24, 0, 6)
-            bar.Position = UDim2.new(0, 12, 0, 45)
-            bar.BackgroundColor3 = Color3.fromRGB(20, 10, 30)
+            bar.Size = UDim2.new(1, -28, 0, 8)
+            bar.Position = UDim2.new(0, 14, 0, 48)
+            bar.BackgroundColor3 = Color3.fromRGB(15, 10, 25)
             bar.BorderSizePixel = 0
             Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
 
@@ -948,16 +1298,16 @@ function GeminiLib:Init(config)
             Instance.new("UICorner", fill).CornerRadius = UDim.new(1, 0)
 
             local fillGlow = Instance.new("Frame", fill)
-            fillGlow.Size = UDim2.new(1, 0, 1, 4)
-            fillGlow.Position = UDim2.new(0, 0, 0, -2)
+            fillGlow.Size = UDim2.new(1, 0, 1, 6)
+            fillGlow.Position = UDim2.new(0, 0, 0, -3)
             fillGlow.BackgroundColor3 = Theme.Accent
             fillGlow.BackgroundTransparency = 0.8
             fillGlow.ZIndex = -1
             Instance.new("UICorner", fillGlow).CornerRadius = UDim.new(1, 0)
 
             local circle = Instance.new("Frame", bar)
-            circle.Size = UDim2.new(0, 18, 0, 18)
-            circle.Position = UDim2.new((default - min) / (max - min), -9, 0.5, -9)
+            circle.Size = UDim2.new(0, 20, 0, 20)
+            circle.Position = UDim2.new((default - min) / (max - min), -10, 0.5, -10)
             circle.BackgroundColor3 = Theme.Text
             circle.BorderSizePixel = 0
             circle.ZIndex = 2
@@ -967,6 +1317,14 @@ function GeminiLib:Init(config)
             circleStroke.Color = Theme.Accent
             circleStroke.Thickness = 3
 
+            local circleGlow = Instance.new("Frame", circle)
+            circleGlow.Size = UDim2.new(1, 8, 1, 8)
+            circleGlow.Position = UDim2.new(0, -4, 0, -4)
+            circleGlow.BackgroundColor3 = Theme.Accent
+            circleGlow.BackgroundTransparency = 0.8
+            circleGlow.ZIndex = -1
+            Instance.new("UICorner", circleGlow).CornerRadius = UDim.new(1, 0)
+
             local sliding = false
 
             local function update()
@@ -975,7 +1333,7 @@ function GeminiLib:Init(config)
                 local bw = bar.AbsoluteSize.X
                 local pos = math.clamp((mx - bx) / bw, 0, 1)
                 tween(fill, TweenInfo.new(0.1), {Size = UDim2.new(pos, 0, 1, 0)})
-                tween(circle, TweenInfo.new(0.1), {Position = UDim2.new(pos, -9, 0.5, -9)})
+                tween(circle, TweenInfo.new(0.1), {Position = UDim2.new(pos, -10, 0.5, -10)})
                 local val = math.floor(min + (max - min) * pos)
                 label.Text = text .. ": " .. val
                 if callback then callback(val) end
@@ -984,21 +1342,21 @@ function GeminiLib:Init(config)
             bar.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     sliding = true
-                    tween(circle, TweenInfo.new(0.15), {Size = UDim2.new(0, 22, 0, 22)})
+                    tween(circle, TweenInfo.new(0.15), {Size = UDim2.new(0, 24, 0, 24)})
                     update()
                 end
             end)
             circle.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     sliding = true
-                    tween(circle, TweenInfo.new(0.15), {Size = UDim2.new(0, 22, 0, 22)})
+                    tween(circle, TweenInfo.new(0.15), {Size = UDim2.new(0, 24, 0, 24)})
                     update()
                 end
             end)
             UserInputService.InputEnded:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     sliding = false
-                    tween(circle, TweenInfo.new(0.15), {Size = UDim2.new(0, 18, 0, 18)})
+                    tween(circle, TweenInfo.new(0.15), {Size = UDim2.new(0, 20, 0, 20)})
                 end
             end)
             UserInputService.InputChanged:Connect(function(input)
@@ -1010,42 +1368,43 @@ function GeminiLib:Init(config)
             return {Set = function(v)
                 local pos = (v - min) / (max - min)
                 tween(fill, TweenInfo.new(0.2), {Size = UDim2.new(pos, 0, 1, 0)})
-                tween(circle, TweenInfo.new(0.2), {Position = UDim2.new(pos, -9, 0.5, -9)})
+                tween(circle, TweenInfo.new(0.2), {Position = UDim2.new(pos, -10, 0.5, -10)})
                 label.Text = text .. ": " .. v
             end}
         end
 
+
         function Tab:AddButton(text, callback)
             local btn = Instance.new("TextButton", Page)
-            btn.Size = UDim2.new(1, 0, 0, 48)
+            btn.Size = UDim2.new(1, 0, 0, 50)
             btn.BackgroundColor3 = Theme.Accent
             btn.Text = text
             btn.TextColor3 = Theme.Main
             btn.Font = Enum.Font.GothamBold
             btn.TextSize = 15
             btn.AutoButtonColor = false
-            Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+            Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 12)
 
             local btnGlow = Instance.new("Frame", btn)
-            btnGlow.Size = UDim2.new(1, 6, 1, 6)
-            btnGlow.Position = UDim2.new(0, -3, 0, -3)
+            btnGlow.Size = UDim2.new(1, 8, 1, 8)
+            btnGlow.Position = UDim2.new(0, -4, 0, -4)
             btnGlow.BackgroundColor3 = Theme.Accent
             btnGlow.BackgroundTransparency = 0.9
             btnGlow.ZIndex = -1
-            Instance.new("UICorner", btnGlow).CornerRadius = UDim.new(0, 12)
+            Instance.new("UICorner", btnGlow).CornerRadius = UDim.new(0, 14)
 
             btn.MouseEnter:Connect(function()
-                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 80, 200), Size = UDim2.new(1, 0, 0, 50)})
+                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(80, 220, 255), Size = UDim2.new(1, 0, 0, 52)})
                 tween(btnGlow, TweenInfo.new(0.2), {BackgroundTransparency = 0.7})
             end)
             btn.MouseLeave:Connect(function()
-                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent, Size = UDim2.new(1, 0, 0, 48)})
+                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent, Size = UDim2.new(1, 0, 0, 50)})
                 tween(btnGlow, TweenInfo.new(0.2), {BackgroundTransparency = 0.9})
             end)
             btn.MouseButton1Click:Connect(function()
-                tween(btn, TweenInfo.new(0.1), {Size = UDim2.new(1, -4, 0, 44)})
+                tween(btn, TweenInfo.new(0.1), {Size = UDim2.new(1, -4, 0, 46)})
                 task.wait(0.1)
-                tween(btn, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 48)})
+                tween(btn, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 50)})
                 if callback then callback() end
             end)
 
@@ -1053,21 +1412,277 @@ function GeminiLib:Init(config)
         end
 
         -- ═══════════════════════════════════════════════════════════════
-        --  DROPDOWN CHECKLIST — выпадающий чеклист с анимацией ▶ ▼
+        --  KEYBIND SELECTOR - For Settings Tab
+        -- ═══════════════════════════════════════════════════════════════
+        function Tab:AddKeybind(text, defaultKey, callback)
+            local frame = Instance.new("Frame", Page)
+            frame.Size = UDim2.new(1, 0, 0, 56)
+            frame.BackgroundColor3 = Theme.Element
+            Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+            frame.MouseEnter:Connect(function()
+                tween(frame, TweenInfo.new(0.2), {BackgroundColor3 = Theme.ElementHover})
+            end)
+            frame.MouseLeave:Connect(function()
+                tween(frame, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element})
+            end)
+
+            local label = Instance.new("TextLabel", frame)
+            label.Size = UDim2.new(1, -120, 0, 56)
+            label.Position = UDim2.new(0, 14, 0, 0)
+            label.BackgroundTransparency = 1
+            label.Text = "  " .. text
+            label.TextColor3 = Theme.Text
+            label.Font = Enum.Font.Gotham
+            label.TextSize = 16
+            label.TextXAlignment = Enum.TextXAlignment.Left
+
+            local keyBtn = Instance.new("TextButton", frame)
+            keyBtn.Size = UDim2.new(0, 90, 0, 32)
+            keyBtn.Position = UDim2.new(1, -104, 0.5, -16)
+            keyBtn.BackgroundColor3 = Color3.fromRGB(20, 15, 30)
+            keyBtn.Text = defaultKey and defaultKey.Name or "None"
+            keyBtn.TextColor3 = Theme.Accent
+            keyBtn.Font = Enum.Font.GothamBold
+            keyBtn.TextSize = 13
+            keyBtn.AutoButtonColor = false
+            Instance.new("UICorner", keyBtn).CornerRadius = UDim.new(0, 8)
+
+            local keyStroke = Instance.new("UIStroke", keyBtn)
+            keyStroke.Color = Theme.Accent
+            keyStroke.Thickness = 1.5
+            keyStroke.Transparency = 0.5
+
+            local listening = false
+            local currentKey = defaultKey
+
+            keyBtn.MouseButton1Click:Connect(function()
+                if listening then return end
+                listening = true
+                keyBtn.Text = "..."
+                tween(keyBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 30, 55)})
+                tween(keyStroke, TweenInfo.new(0.2), {Transparency = 0, Color = Theme.AccentSecondary})
+
+                local connection
+                connection = UserInputService.InputBegan:Connect(function(input, gpe)
+                    if gpe then return end
+                    if input.KeyCode == Enum.KeyCode.Escape then
+                        listening = false
+                        keyBtn.Text = currentKey and currentKey.Name or "None"
+                        tween(keyBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(20, 15, 30)})
+                        tween(keyStroke, TweenInfo.new(0.2), {Transparency = 0.5, Color = Theme.Accent})
+                        if connection then connection:Disconnect() end
+                        return
+                    end
+                    if input.KeyCode ~= Enum.KeyCode.Unknown then
+                        currentKey = input.KeyCode
+                        keyBtn.Text = input.KeyCode.Name
+                        listening = false
+                        tween(keyBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(20, 15, 30)})
+                        tween(keyStroke, TweenInfo.new(0.2), {Transparency = 0.5, Color = Theme.Accent})
+                        if callback then callback(input.KeyCode) end
+                        if connection then connection:Disconnect() end
+                    end
+                end)
+            end)
+
+            return {
+                Get = function() return currentKey end,
+                Set = function(key)
+                    currentKey = key
+                    keyBtn.Text = key and key.Name or "None"
+                end
+            }
+        end
+
+        -- ═══════════════════════════════════════════════════════════════
+        --  TEXTBOX INPUT
+        -- ═══════════════════════════════════════════════════════════════
+        function Tab:AddTextBox(text, placeholder, callback)
+            local frame = Instance.new("Frame", Page)
+            frame.Size = UDim2.new(1, 0, 0, 70)
+            frame.BackgroundColor3 = Theme.Element
+            Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+            frame.MouseEnter:Connect(function()
+                tween(frame, TweenInfo.new(0.2), {BackgroundColor3 = Theme.ElementHover})
+            end)
+            frame.MouseLeave:Connect(function()
+                tween(frame, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element})
+            end)
+
+            local label = Instance.new("TextLabel", frame)
+            label.Size = UDim2.new(1, -20, 0, 22)
+            label.Position = UDim2.new(0, 14, 0, 8)
+            label.BackgroundTransparency = 1
+            label.Text = text
+            label.TextColor3 = Theme.Text
+            label.Font = Enum.Font.Gotham
+            label.TextSize = 14
+            label.TextXAlignment = Enum.TextXAlignment.Left
+
+            local inputBox = Instance.new("TextBox", frame)
+            inputBox.Size = UDim2.new(1, -28, 0, 28)
+            inputBox.Position = UDim2.new(0, 14, 0, 34)
+            inputBox.BackgroundColor3 = Color3.fromRGB(15, 12, 22)
+            inputBox.Text = ""
+            inputBox.PlaceholderText = placeholder or "Enter text..."
+            inputBox.PlaceholderColor3 = Color3.fromRGB(80, 80, 100)
+            inputBox.TextColor3 = Theme.Text
+            inputBox.Font = Enum.Font.Gotham
+            inputBox.TextSize = 14
+            inputBox.ClearTextOnFocus = false
+            Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0, 8)
+
+            local inputStroke = Instance.new("UIStroke", inputBox)
+            inputStroke.Color = Theme.Accent
+            inputStroke.Thickness = 1
+            inputStroke.Transparency = 0.6
+
+            inputBox.Focused:Connect(function()
+                tween(inputStroke, TweenInfo.new(0.2), {Transparency = 0.2, Thickness = 1.5})
+                tween(inputBox, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(20, 17, 28)})
+            end)
+            inputBox.FocusLost:Connect(function()
+                tween(inputStroke, TweenInfo.new(0.2), {Transparency = 0.6, Thickness = 1})
+                tween(inputBox, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(15, 12, 22)})
+                if callback then callback(inputBox.Text) end
+            end)
+
+            return {
+                Get = function() return inputBox.Text end,
+                Set = function(txt) inputBox.Text = txt end
+            }
+        end
+
+        -- ═══════════════════════════════════════════════════════════════
+        --  COLOR PICKER
+        -- ═══════════════════════════════════════════════════════════════
+        function Tab:AddColorPicker(text, defaultColor, callback)
+            defaultColor = defaultColor or Color3.fromRGB(0, 200, 255)
+
+            local frame = Instance.new("Frame", Page)
+            frame.Size = UDim2.new(1, 0, 0, 56)
+            frame.BackgroundColor3 = Theme.Element
+            Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+            frame.MouseEnter:Connect(function()
+                tween(frame, TweenInfo.new(0.2), {BackgroundColor3 = Theme.ElementHover})
+            end)
+            frame.MouseLeave:Connect(function()
+                tween(frame, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Element})
+            end)
+
+            local label = Instance.new("TextLabel", frame)
+            label.Size = UDim2.new(1, -80, 0, 56)
+            label.Position = UDim2.new(0, 14, 0, 0)
+            label.BackgroundTransparency = 1
+            label.Text = "  " .. text
+            label.TextColor3 = Theme.Text
+            label.Font = Enum.Font.Gotham
+            label.TextSize = 16
+            label.TextXAlignment = Enum.TextXAlignment.Left
+
+            local colorPreview = Instance.new("TextButton", frame)
+            colorPreview.Size = UDim2.new(0, 36, 0, 36)
+            colorPreview.Position = UDim2.new(1, -52, 0.5, -18)
+            colorPreview.BackgroundColor3 = defaultColor
+            colorPreview.Text = ""
+            colorPreview.AutoButtonColor = false
+            Instance.new("UICorner", colorPreview).CornerRadius = UDim.new(0, 8)
+
+            local previewStroke = Instance.new("UIStroke", colorPreview)
+            previewStroke.Color = Theme.Text
+            previewStroke.Thickness = 2
+            previewStroke.Transparency = 0.5
+
+            -- Simple color picker popup
+            local pickerOpen = false
+            local pickerFrame = Instance.new("Frame", frame)
+            pickerFrame.Size = UDim2.new(1, 0, 0, 0)
+            pickerFrame.Position = UDim2.new(0, 0, 1, 5)
+            pickerFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+            pickerFrame.BorderSizePixel = 0
+            pickerFrame.ClipsDescendants = true
+            pickerFrame.Visible = false
+            Instance.new("UICorner", pickerFrame).CornerRadius = UDim.new(0, 10)
+
+            local pickerStroke = Instance.new("UIStroke", pickerFrame)
+            pickerStroke.Color = Theme.Accent
+            pickerStroke.Thickness = 1
+            pickerStroke.Transparency = 0.5
+
+            local colorGrid = Instance.new("UIGridLayout", pickerFrame)
+            colorGrid.CellSize = UDim2.new(0, 32, 0, 32)
+            colorGrid.CellPadding = UDim2.new(0, 6, 0, 6)
+            colorGrid.FillDirection = Enum.FillDirection.Horizontal
+            colorGrid.HorizontalAlignment = Enum.HorizontalAlignment.Center
+            colorGrid.VerticalAlignment = Enum.VerticalAlignment.Center
+
+            local presetColors = {
+                Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 100, 0), Color3.fromRGB(255, 200, 0),
+                Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 255, 200), Color3.fromRGB(0, 200, 255),
+                Color3.fromRGB(0, 100, 255), Color3.fromRGB(100, 0, 255), Color3.fromRGB(255, 0, 200),
+                Color3.fromRGB(255, 255, 255), Color3.fromRGB(200, 200, 200), Color3.fromRGB(100, 100, 100)
+            }
+
+            for _, color in ipairs(presetColors) do
+                local colorBtn = Instance.new("TextButton", pickerFrame)
+                colorBtn.BackgroundColor3 = color
+                colorBtn.Text = ""
+                colorBtn.AutoButtonColor = false
+                Instance.new("UICorner", colorBtn).CornerRadius = UDim.new(0, 6)
+
+                colorBtn.MouseButton1Click:Connect(function()
+                    colorPreview.BackgroundColor3 = color
+                    if callback then callback(color) end
+                    pickerOpen = false
+                    tween(pickerFrame, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)})
+                    task.delay(0.2, function()
+                        pickerFrame.Visible = false
+                    end)
+                end)
+            end
+
+            colorPreview.MouseButton1Click:Connect(function()
+                pickerOpen = not pickerOpen
+                if pickerOpen then
+                    pickerFrame.Visible = true
+                    tween(pickerFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = UDim2.new(1, 0, 0, 120)})
+                else
+                    tween(pickerFrame, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)})
+                    task.delay(0.2, function()
+                        pickerFrame.Visible = false
+                    end)
+                end
+            end)
+
+            return {
+                Get = function() return colorPreview.BackgroundColor3 end,
+                Set = function(color)
+                    colorPreview.BackgroundColor3 = color
+                    if callback then callback(color) end
+                end
+            }
+        end
+
+
+        -- ═══════════════════════════════════════════════════════════════
+        --  DROPDOWN CHECKLIST
         -- ═══════════════════════════════════════════════════════════════
         function Tab:AddDropdown(titleText, options, callback)
             local isOpen = false
             local results = {}
             local checkboxes = {}
-            local itemHeight = 38
-            local headerHeight = 44
+            local itemHeight = 40
+            local headerHeight = 48
 
             local container = Instance.new("Frame", Page)
             container.Size = UDim2.new(1, 0, 0, headerHeight)
             container.BackgroundColor3 = Theme.Element
             container.BorderSizePixel = 0
             container.ClipsDescendants = true
-            Instance.new("UICorner", container).CornerRadius = UDim.new(0, 8)
+            Instance.new("UICorner", container).CornerRadius = UDim.new(0, 10)
 
             -- Header
             local headerBtn = Instance.new("TextButton", container)
@@ -1078,7 +1693,7 @@ function GeminiLib:Init(config)
 
             local titleLabel = Instance.new("TextLabel", headerBtn)
             titleLabel.Size = UDim2.new(1, -80, 1, 0)
-            titleLabel.Position = UDim2.new(0, 12, 0, 0)
+            titleLabel.Position = UDim2.new(0, 14, 0, 0)
             titleLabel.BackgroundTransparency = 1
             titleLabel.Text = titleText
             titleLabel.TextColor3 = Theme.Text
@@ -1134,21 +1749,21 @@ function GeminiLib:Init(config)
 
                 -- Checkbox
                 local box = Instance.new("TextButton", row)
-                box.Size = UDim2.new(0, 16, 0, 16)
-                box.Position = UDim2.new(0, 8, 0.5, -8)
+                box.Size = UDim2.new(0, 18, 0, 18)
+                box.Position = UDim2.new(0, 10, 0.5, -9)
                 box.BackgroundColor3 = Theme.Sidebar
                 box.Text = ""
                 box.AutoButtonColor = false
-                Instance.new("UICorner", box).CornerRadius = UDim.new(0, 3)
+                Instance.new("UICorner", box).CornerRadius = UDim.new(0, 4)
 
                 local boxStroke = Instance.new("UIStroke", box)
                 boxStroke.Color = color
-                boxStroke.Thickness = 1
+                boxStroke.Thickness = 1.5
                 boxStroke.Transparency = 0.4
 
                 local check = Instance.new("Frame", box)
-                check.Size = UDim2.new(0, 8, 0, 8)
-                check.Position = UDim2.new(0.5, -4, 0.5, -4)
+                check.Size = UDim2.new(0, 10, 0, 10)
+                check.Position = UDim2.new(0.5, -5, 0.5, -5)
                 check.BackgroundColor3 = color
                 check.BorderSizePixel = 0
                 check.Visible = false
@@ -1156,8 +1771,8 @@ function GeminiLib:Init(config)
 
                 -- Label
                 local label = Instance.new("TextLabel", row)
-                label.Size = UDim2.new(1, -40, 1, 0)
-                label.Position = UDim2.new(0, 32, 0, 0)
+                label.Size = UDim2.new(1, -44, 1, 0)
+                label.Position = UDim2.new(0, 36, 0, 0)
                 label.BackgroundTransparency = 1
                 label.Text = option
                 label.TextColor3 = color
@@ -1170,7 +1785,7 @@ function GeminiLib:Init(config)
                     check.Visible = results[option]
 
                     if results[option] then
-                        tween(check, TweenInfo.new(0.1), {Size = UDim2.new(0, 8, 0, 8)})
+                        tween(check, TweenInfo.new(0.1), {Size = UDim2.new(0, 10, 0, 10)})
                         tween(boxStroke, TweenInfo.new(0.15), {Transparency = 0})
                     else
                         tween(boxStroke, TweenInfo.new(0.15), {Transparency = 0.4})
@@ -1238,9 +1853,10 @@ function GeminiLib:Init(config)
                 end
             }
         end
+
         function Tab:AddLabel(text)
             local lbl = Instance.new("TextLabel", Page)
-            lbl.Size = UDim2.new(1, 0, 0, 20)
+            lbl.Size = UDim2.new(1, 0, 0, 22)
             lbl.BackgroundTransparency = 1
             lbl.Text = text
             lbl.TextColor3 = Theme.SubText
@@ -1254,14 +1870,14 @@ function GeminiLib:Init(config)
         return Tab
     end
 
-    -- Активировать первую вкладку
+    -- Activate first tab
     function Window:SelectFirstTab()
         if #Tabs > 0 then
             Tabs[1]:Select()
         end
     end
 
-    -- Показать UI с анимацией
+    -- Show UI with animation
     function Window:Show()
         ScreenGui.Enabled = true
         MainFrame.Size = UDim2.new(0, 0, 0, 0)
@@ -1411,7 +2027,6 @@ function GeminiLib:Init(config)
                         for _, v in pairs(workspace:GetChildren()) do
                             if v:IsA("Model") and v:GetAttribute("SpawnedCrate") then
                                 local r = v:GetAttribute("Rarity") or "Common"
-                                -- Проверяем что редкость выбрана в чеклисте
                                 if _G.GeminiConfig.SelectedRarities[r] and priorities[r] then
                                     if priorities[r] < minP then
                                         minP = priorities[r]
@@ -1457,6 +2072,13 @@ function GeminiLib:Init(config)
                 end
             end
             StatusLabel.Text = "Target Crates: " .. count
+            if count > 0 then
+                StatusSub.Text = "Farming active"
+                StatusSub.TextColor3 = Theme.Success
+            else
+                StatusSub.Text = "No targets found"
+                StatusSub.TextColor3 = Theme.SubText
+            end
         end
     end)
 
@@ -1495,7 +2117,6 @@ function GeminiLib:Init(config)
             end
         end
     end
-
 
     return Window
 end
