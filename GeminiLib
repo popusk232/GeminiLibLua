@@ -511,6 +511,15 @@ function GeminiLib:Init(config)
     MainFrame.ClipsDescendants = true
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
 
+    local MainGlow = Instance.new("Frame", MainFrame)
+    MainGlow.Name = "MainGlow"
+    MainGlow.Size = UDim2.new(1, 0, 1, 0)
+    MainGlow.BackgroundColor3 = Theme.Accent
+    MainGlow.BackgroundTransparency = 0.95
+    MainGlow.ZIndex = -1
+    MainGlow.BorderSizePixel = 0
+    Instance.new("UICorner", MainGlow).CornerRadius = UDim.new(0, 8)
+
     local MainStroke = Instance.new("UIStroke", MainFrame)
     MainStroke.Color = Theme.Accent
     MainStroke.Thickness = 1
@@ -588,7 +597,7 @@ function GeminiLib:Init(config)
         tween(MainStroke, TweenInfo.new(0.3), {Transparency = 1})
         task.wait(0.4)
         ScreenGui:Destroy()
-        WatermarkGui:Destroy()
+        if WatermarkGui and WatermarkGui.Parent then WatermarkGui:Destroy() end
     end)
 
     createMacBtn(Theme.Hide, MacBtnOffset, function()
@@ -1026,17 +1035,17 @@ function GeminiLib:Init(config)
             Instance.new("UICorner", btnGlow).CornerRadius = UDim.new(0, 12)
 
             btn.MouseEnter:Connect(function()
-                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 80, 200), Size = UDim2.new(1, 4, 0, 42)})
+                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 80, 200), Size = UDim2.new(1, 0, 0, 50)})
                 tween(btnGlow, TweenInfo.new(0.2), {BackgroundTransparency = 0.7})
             end)
             btn.MouseLeave:Connect(function()
-                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent, Size = UDim2.new(1, 0, 0, 40)})
+                tween(btn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent, Size = UDim2.new(1, 0, 0, 48)})
                 tween(btnGlow, TweenInfo.new(0.2), {BackgroundTransparency = 0.9})
             end)
             btn.MouseButton1Click:Connect(function()
-                tween(btn, TweenInfo.new(0.1), {Size = UDim2.new(1, -4, 0, 38)})
+                tween(btn, TweenInfo.new(0.1), {Size = UDim2.new(1, -4, 0, 44)})
                 task.wait(0.1)
-                tween(btn, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 40)})
+                tween(btn, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 48)})
                 if callback then callback() end
             end)
 
@@ -1297,18 +1306,25 @@ function GeminiLib:Init(config)
 
     local function createESP(plr)
         if plr == player then return end
+        local oldFolder = ESPFolder:FindFirstChild(plr.Name)
+        if oldFolder then oldFolder:Destroy() end
+
         local espFolder = Instance.new("Folder", ESPFolder)
         espFolder.Name = plr.Name
+        local espConnection = nil
 
         local function updateESP()
+            if espConnection then
+                espConnection:Disconnect()
+                espConnection = nil
+            end
+            for _, v in pairs(espFolder:GetChildren()) do v:Destroy() end
+
             if not _G.GeminiConfig.ESPEnabled or not plr.Character then
-                for _, v in pairs(espFolder:GetChildren()) do v:Destroy() end
                 return
             end
             local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
             if not hrp then return end
-
-            for _, v in pairs(espFolder:GetChildren()) do v:Destroy() end
 
             local billboard = Instance.new("BillboardGui", espFolder)
             billboard.Adornee = hrp
@@ -1344,10 +1360,12 @@ function GeminiLib:Init(config)
             highlight.FillTransparency = 0.5
             highlight.OutlineTransparency = 0
 
-            local conn
-            conn = RunService.RenderStepped:Connect(function()
+            espConnection = RunService.RenderStepped:Connect(function()
                 if not _G.GeminiConfig.ESPEnabled or not plr.Character or not player.Character then
-                    conn:Disconnect()
+                    if espConnection then
+                        espConnection:Disconnect()
+                        espConnection = nil
+                    end
                     return
                 end
                 local myHrp = player.Character:FindFirstChild("HumanoidRootPart")
@@ -1364,7 +1382,10 @@ function GeminiLib:Init(config)
         updateESP()
     end
 
+    local espSetupDone = false
     function Window:SetupESP()
+        if espSetupDone then return end
+        espSetupDone = true
         for _, plr in pairs(Players:GetPlayers()) do
             createESP(plr)
         end
@@ -1400,15 +1421,19 @@ function GeminiLib:Init(config)
                             end
                         end
 
-                        if target then
-                            root.CFrame = target:GetPivot() * CFrame.new(0, 3, 0)
+                        if target and target.Parent then
+                            pcall(function()
+                                root.CFrame = target:GetPivot() * CFrame.new(0, 3, 0)
+                            end)
                             task.wait(0.2)
-                            local det = target:FindFirstChildOfClass("ClickDetector") or target:FindFirstChild("ClickDetector", true)
-                            if det and fireclickdetector then 
-                                fireclickdetector(det) 
-                            elseif det then
-                                warn("GEMINI: fireclickdetector not supported by your executor")
-                            end
+                            pcall(function()
+                                local det = target:FindFirstChildOfClass("ClickDetector") or target:FindFirstChild("ClickDetector", true)
+                                if det and fireclickdetector then 
+                                    fireclickdetector(det) 
+                                elseif det then
+                                    warn("GEMINI: fireclickdetector not supported by your executor")
+                                end
+                            end)
                             task.wait(_G.GeminiConfig.TweenSpeed / 1000)
                         end
                     end
@@ -1452,17 +1477,21 @@ function GeminiLib:Init(config)
             end
         end
 
-        if best and player.Character then
+        if best and best.Parent and player.Character then
             local root = player.Character:FindFirstChild("HumanoidRootPart")
             if root then
-                root.CFrame = best:GetPivot() * CFrame.new(0, 3, 0)
+                pcall(function()
+                    root.CFrame = best:GetPivot() * CFrame.new(0, 3, 0)
+                end)
                 task.wait(0.2)
-                local det = best:FindFirstChildOfClass("ClickDetector") or best:FindFirstChild("ClickDetector", true)
-                if det and fireclickdetector then 
-                    fireclickdetector(det) 
-                elseif det then
-                    warn("GEMINI: fireclickdetector not supported")
-                end
+                pcall(function()
+                    local det = best:FindFirstChildOfClass("ClickDetector") or best:FindFirstChild("ClickDetector", true)
+                    if det and fireclickdetector then 
+                        fireclickdetector(det) 
+                    elseif det then
+                        warn("GEMINI: fireclickdetector not supported")
+                    end
+                end)
             end
         end
     end
