@@ -1,0 +1,308 @@
+-- ==========================================
+-- MAXIMALISM UI LIBRARY
+-- Version: 1.0
+-- ==========================================
+
+local Library = {}
+Library.__index = Library
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local Theme = {
+    Background = Color3.fromRGB(12, 12, 14),
+    Header = Color3.fromRGB(15, 15, 18),
+    Accent = Color3.fromRGB(255, 20, 20),
+    Text = Color3.fromRGB(240, 240, 240),
+    SubText = Color3.fromRGB(120, 120, 120),
+    ButtonBg = Color3.fromRGB(20, 20, 24),
+    ToggleOn = Color3.fromRGB(255, 20, 20),
+    ToggleOff = Color3.fromRGB(60, 60, 65),
+    Font = Enum.Font.Code
+}
+
+local function Create(class, props)
+    local inst = Instance.new(class)
+    for k, v in pairs(props or {}) do
+        inst[k] = v
+    end
+    return inst
+end
+
+-- ==========================================
+-- TAB CLASS
+-- ==========================================
+local Tab = {}
+Tab.__index = Tab
+
+function Tab:AddSection(name)
+    Create("TextLabel", {
+        Size = UDim2.new(1, 0, 0, 20),
+        BackgroundTransparency = 1,
+        Text = "[ " .. name:upper() .. " ]",
+        TextColor3 = Theme.SubText,
+        Font = Theme.Font,
+        TextSize = 11,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Parent = self.Frame
+    })
+    return self
+end
+
+function Tab:AddToggle(text, default, callback)
+    local state = default or false
+    local toggleFrame = Create("Frame", {
+        Size = UDim2.new(1, 0, 0, 35),
+        BackgroundColor3 = Theme.ButtonBg,
+        Parent = self.Frame
+    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = toggleFrame})
+    Create("UIStroke", {Color = Color3.fromRGB(40, 40, 45), Thickness = 1, Parent = toggleFrame})
+    
+    local indicator = Create("Frame", {
+        Size = UDim2.new(0, 6, 0, 6),
+        Position = UDim2.new(0, 12, 0.5, -3),
+        BackgroundColor3 = state and Theme.ToggleOn or Theme.ToggleOff,
+        Parent = toggleFrame
+    })
+    Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = indicator})
+    
+    Create("TextLabel", {
+        Size = UDim2.new(1, -40, 1, 0),
+        Position = UDim2.new(0, 30, 0, 0),
+        BackgroundTransparency = 1,
+        Text = text,
+        TextColor3 = Theme.Text,
+        Font = Theme.Font,
+        TextSize = 13,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Parent = toggleFrame
+    })
+    
+    local status = Create("TextLabel", {
+        Size = UDim2.new(0, 40, 1, 0),
+        Position = UDim2.new(1, -45, 0, 0),
+        BackgroundTransparency = 1,
+        Text = state and "ON" or "OFF",
+        TextColor3 = state and Theme.ToggleOn or Theme.SubText,
+        Font = Theme.Font,
+        TextSize = 11,
+        TextXAlignment = Enum.TextXAlignment.Right,
+        Parent = toggleFrame
+    })
+    
+    local toggleBtn = Create("TextButton", {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Text = "",
+        Parent = toggleFrame
+    })
+    
+    toggleBtn.MouseButton1Click:Connect(function()
+        state = not state
+        indicator.BackgroundColor3 = state and Theme.ToggleOn or Theme.ToggleOff
+        status.Text = state and "ON" or "OFF"
+        status.TextColor3 = state and Theme.ToggleOn or Theme.SubText
+        if callback then callback(state) end
+    end)
+    
+    return {
+        SetState = function(self, newState)
+            state = newState
+            indicator.BackgroundColor3 = state and Theme.ToggleOn or Theme.ToggleOff
+            status.Text = state and "ON" or "OFF"
+            status.TextColor3 = state and Theme.ToggleOn or Theme.SubText
+        end,
+        GetState = function() return state end
+    }
+end
+
+function Tab:AddButton(text, callback)
+    local btn = Create("TextButton", {
+        Size = UDim2.new(1, 0, 0, 35),
+        BackgroundColor3 = Theme.ButtonBg,
+        Text = text,
+        TextColor3 = Theme.Text,
+        Font = Theme.Font,
+        TextSize = 13,
+        Parent = self.Frame
+    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = btn})
+    local stroke = Create("UIStroke", {Color = Color3.fromRGB(40, 40, 45), Thickness = 1, Parent = btn})
+    
+    btn.MouseEnter:Connect(function()
+        TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Theme.Accent}):Play()
+    end)
+    btn.MouseLeave:Connect(function()
+        TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(40, 40, 45)}):Play()
+    end)
+    
+    btn.MouseButton1Click:Connect(function()
+        if callback then callback() end
+    end)
+end
+
+-- ==========================================
+-- WINDOW CLASS
+-- ==========================================
+local Window = {}
+Window.__index = Window
+
+function Window:AddTab(name)
+    local tabBtn = Create("TextButton", {
+        Size = UDim2.new(0, 100, 0, 30),
+        BackgroundColor3 = Theme.Background,
+        Text = name,
+        TextColor3 = Theme.SubText,
+        Font = Theme.Font,
+        TextSize = 14,
+        Parent = self.TabContainer
+    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 4), Parent = tabBtn})
+    
+    local tabFrame = Create("ScrollingFrame", {
+        Size = UDim2.new(1, -20, 1, -10),
+        Position = UDim2.new(0, 10, 0, 5),
+        BackgroundTransparency = 1,
+        ScrollBarThickness = 2,
+        ScrollBarImageColor3 = Theme.Accent,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+        Parent = self.ContentContainer
+    })
+    Create("UIListLayout", {Padding = UDim.new(0, 8), Parent = tabFrame})
+    
+    local tabObj = setmetatable({
+        Frame = tabFrame,
+        Button = tabBtn,
+        Window = self
+    }, Tab)
+    
+    tabBtn.MouseButton1Click:Connect(function()
+        self:SelectTab(tabObj)
+    end)
+    
+    table.insert(self.Tabs, tabObj)
+    if #self.Tabs == 1 then
+        self:SelectTab(tabObj)
+    end
+    
+    return tabObj
+end
+
+function Window:SelectTab(tabObj)
+    for _, t in pairs(self.Tabs) do
+        t.Button.BackgroundColor3 = Theme.Background
+        t.Button.TextColor3 = Theme.SubText
+        t.Frame.Visible = false
+    end
+    tabObj.Button.BackgroundColor3 = Theme.Header
+    tabObj.Button.TextColor3 = Theme.Accent
+    tabObj.Frame.Visible = true
+end
+
+-- ==========================================
+-- LIBRARY CLASS
+-- ==========================================
+function Library:CreateWindow(title, customTheme)
+    if customTheme then
+        for k, v in pairs(customTheme) do Theme[k] = v end
+    end
+
+    local ScreenGui = Create("ScreenGui", {
+        Name = "Maximalism_UI",
+        ResetOnSpawn = false,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        Parent = LocalPlayer:WaitForChild("PlayerGui")
+    })
+
+    local MainFrame = Create("Frame", {
+        Size = UDim2.new(0, 320, 0, 420),
+        Position = UDim2.new(0.5, -160, 0.5, -210),
+        BackgroundColor3 = Theme.Background,
+        Parent = ScreenGui
+    })
+    Create("UIStroke", {Color = Theme.Accent, Thickness = 1.5, Transparency = 0.3, Parent = MainFrame})
+    
+    local Header = Create("Frame", {
+        Size = UDim2.new(1, 0, 0, 45),
+        BackgroundColor3 = Theme.Header,
+        Parent = MainFrame
+    })
+    Create("Frame", {Size = UDim2.new(1, 0, 0, 1), Position = UDim2.new(0, 0, 1, 0), BackgroundColor3 = Theme.Accent, Parent = Header})
+    
+    Create("TextLabel", {
+        Size = UDim2.new(1, -20, 0, 20),
+        Position = UDim2.new(0, 15, 0, 5),
+        BackgroundTransparency = 1,
+        Text = title or "MAXIMALISM",
+        TextColor3 = Theme.Text,
+        Font = Theme.Font,
+        TextSize = 16,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Parent = Header
+    })
+    
+    Create("TextLabel", {
+        Size = UDim2.new(1, -20, 0, 14),
+        Position = UDim2.new(0, 15, 0, 24),
+        BackgroundTransparency = 1,
+        Text = "SYS.VER 2.4.9 // ACTIVE",
+        TextColor3 = Theme.SubText,
+        Font = Theme.Font,
+        TextSize = 10,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Parent = Header
+    })
+
+    local TabContainer = Create("Frame", {
+        Size = UDim2.new(1, 0, 0, 35),
+        Position = UDim2.new(0, 0, 0, 45),
+        BackgroundColor3 = Theme.Background,
+        Parent = MainFrame
+    })
+    Create("UIListLayout", {FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 5), Parent = TabContainer})
+    Create("UIPadding", {PaddingLeft = UDim.new(0, 5), PaddingTop = UDim.new(0, 2), Parent = TabContainer})
+
+    local ContentContainer = Create("Frame", {
+        Size = UDim2.new(1, 0, 1, -85),
+        Position = UDim2.new(0, 0, 0, 80),
+        BackgroundColor3 = Theme.Background,
+        BackgroundTransparency = 0.5,
+        Parent = MainFrame
+    })
+
+    -- Dragging Logic
+    local dragging, dragInput, dragStart, startPos
+    Header.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
+        end
+    end)
+    Header.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    return setmetatable({
+        Gui = ScreenGui,
+        Main = MainFrame,
+        TabContainer = TabContainer,
+        ContentContainer = ContentContainer,
+        Tabs = {}
+    }, Window)
+end
+
+return Library
