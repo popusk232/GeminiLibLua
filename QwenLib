@@ -551,4 +551,3 @@ function CSGUI:CreateWindow(title, size)
 end
 
 return CSGUI
-s
